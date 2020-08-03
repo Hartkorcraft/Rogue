@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     private Grid grid;
 
@@ -30,7 +30,7 @@ public class PlayerControl : MonoBehaviour
             if (moved == false)
             {
 
-                movement2D.MoveBy(transform.position, new Vector2(transform.position.x + GetMovementDirection().x, transform.position.y + GetMovementDirection().y),transform);
+                movement2D.MoveBy(transform.position, GetMovementDirection(),transform);
 
                 moved = true;
             }
