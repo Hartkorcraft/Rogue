@@ -7,8 +7,16 @@ using UnityEngine.Tilemaps;
 public class Grid : MonoBehaviour
 {
 
+    //Debug Stuff
+    [SerializeField] private bool debugChangeTile = false;
+    [SerializeField] private CellState selectedChangeTile = CellState.wall;
+
+
+
+
+    //Normal Stuff
     public enum Direction { up, down, left, right };
-    public enum CellState { available, floor, entrance, path, wall, darkness, debug };
+    [SerializeField] public enum CellState { available, floor, entrance, path, wall, darkness, debug, noCell };
 
     public Sprite floorSprite;
     public Tilemap floorTiles;
@@ -67,6 +75,20 @@ public class Grid : MonoBehaviour
         debugTile.sprite = debugSprite;
     }
 
+    private void Update()
+    {
+        if (debugChangeTile == true)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (gridCellsRangeCheck(pos) == true)
+                    SetTile(GetCellPos(pos), selectedChangeTile);
+
+            }
+        }
+    }
+
     public void SetTiles()
     {
         for (int x = 0; x < gridSize.x; x++)
@@ -111,14 +133,123 @@ public class Grid : MonoBehaviour
             }
 
         }
+    } 
+    public void SetTile(Vector2Int pos, CellState cellState)
+    {
+            gridCells[pos.x][pos.y].cellstate = cellState;
+            switch (gridCells[pos.x][pos.y].cellstate)
+            {
+                case CellState.available:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                    break;
+
+                case CellState.darkness:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), darknessTile);
+                    break;
+
+                case CellState.floor:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), floorTile);
+                    break;
+
+                case CellState.wall:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), wallTile);
+                    break;
+
+                case CellState.path:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
+                    break;
+                case CellState.entrance:
+
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), entranceTile);
+                    break;
+
+                case CellState.debug:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                    break;
+
+                default:
+                    Debug.LogWarning("No cell state?");
+                    break;
+            }
+        
+    }
+    
+    public void SetTile(Vector2Int pos)
+    {
+            switch (gridCells[pos.x][pos.y].cellstate)
+            {
+                case CellState.available:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                    break;
+
+                case CellState.darkness:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), darknessTile);
+                    break;
+
+                case CellState.floor:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), floorTile);
+                    break;
+
+                case CellState.wall:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), wallTile);
+                    break;
+
+                case CellState.path:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
+                    break;
+                case CellState.entrance:
+
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), entranceTile);
+                    break;
+
+                case CellState.debug:
+                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                    break;
+
+                default:
+                    Debug.LogWarning("No cell state?");
+                    break;
+            }
+        
     }
 
     public Vector2Int GetGridSize() { return gridSize; }
 
-    public Vector2Int GetCell(Vector2 pos)
+    public Vector2Int GetCellPos(Vector2 pos)
     {
         Vector2Int cellPos = new Vector2Int(Mathf.FloorToInt(pos.x),Mathf.FloorToInt(pos.y));
         return cellPos;
+    }
+    public CellState GetCellState(Vector2 pos)
+    {
+        Vector2Int cellPos = new Vector2Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
+        if (gridCellsRangeCheck(cellPos))
+        {
+            return gridCells[cellPos.x][cellPos.y].cellstate;
+        }
+        else return CellState.noCell;
+    }
+
+    
+    public bool gridCellsRangeCheck(Vector2Int index)
+    {
+        if ((index.x > 0 && index.x <= gridSize.x) && (index.y > 0 && index.y <= gridSize.y))
+            return true;
+        else return false;
+    }
+    public bool gridCellsRangeCheck(Vector2 pos)
+    {
+        if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
+            return true;
+        else return false;
+    }
+
+    public bool gridCellsRangeCheck(Vector3 pos)
+    {
+        Debug.Log(pos);
+        if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
+            return true;
+        else return false;
     }
 
     public Vector2Int GetPosTransform(Transform transform)
@@ -130,26 +261,11 @@ public class Grid : MonoBehaviour
     //public float GetTileSize() { return tileSize = Mathf.Abs(gridCells[0][0].gridPos.y - gridCells[0][1].gridPos.y);  }
     public GridCell GetCellByPos(Vector2Int pos)
     {
-        return gridCells[pos.x][pos.y];
+        if (gridCellsRangeCheck(pos))
+            return gridCells[pos.x][pos.y];
+        else return null;
     }
 
-    public class GridCell
-    {
-        public Vector2Int gridPos;
-        public Vector2 worldPos;
-
-        public CellState cellstate;
-        //public int index;
-
-        public GridCell(Vector2Int gridPos, Vector2 worldPos, CellState cellState)
-        {
-            this.gridPos = gridPos;
-            this.worldPos = worldPos;
-            this.cellstate = cellState;
-            //this.index = index;
-        }
-
-    }
     
     public Sector GetBiggestSector()
     {
@@ -176,6 +292,23 @@ public class Grid : MonoBehaviour
 
     }
 
+    public class GridCell
+    {
+        public Vector2Int gridPos;
+        public Vector2 worldPos;
+        public CellState cellstate;
+        //public int index;
+
+        public GridCell(Vector2Int gridPos, Vector2 worldPos, CellState cellState)
+        {
+            this.gridPos = gridPos;
+            this.worldPos = worldPos;
+            this.cellstate = cellState;
+            //this.index = index;
+        }
+
+
+    }
 
     [System.Serializable]
     public class Room

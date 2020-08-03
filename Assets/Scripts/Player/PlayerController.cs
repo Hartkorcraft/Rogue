@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
             if (moved == false)
             {
 
-                movement2D.MoveBy(transform.position, GetMovementDirection(),transform);
+                movement2D.MoveBy(transform.position, GetMovementDirection(),transform,grid);
 
                 moved = true;
             }
