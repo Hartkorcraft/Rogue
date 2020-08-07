@@ -22,7 +22,7 @@ public class PathFinding : MonoBehaviour
     {
 
         //Check if Cells are on grid
-        if (grid.GridCellsRangeCheck(startPos) == false || grid.GridCellsRangeCheck(endPos) == false) return null;
+        if (grid.GridCellsRangeCheck(startPos) == false || grid.GridCellsRangeCheck(endPos) == false || startPos.Equals(endPos) == true) return null;
 
 
         //Debug.Log("Finding Path");

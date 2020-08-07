@@ -33,7 +33,7 @@ public class TestObject : MonoBehaviour, ITurn
         {
             movePoints--;
             List<Grid.GridCell> path = pathfinding.FindPath(transform.position, playerPos.position);
-            transform.position = new Vector2(path[0].gridPos.x +0.5f, path[0].gridPos.y+0.5f);
+            if (path != null)  transform.position = new Vector2(path[0].gridPos.x +0.5f, path[0].gridPos.y+0.5f);
         }
 
     }
