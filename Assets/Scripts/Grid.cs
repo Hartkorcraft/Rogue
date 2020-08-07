@@ -46,9 +46,10 @@ public class Grid : MonoBehaviour
     private Vector2Int gridSize = new Vector2Int(20, 20);
 
     public GridCell[][] gridCells;
-
     public List<Sector> sectors = new List<Sector>();
     public List<Room> rooms = new List<Room>();
+
+    //public List<GridCell> path = new List<GridCell>();
 
     private void Awake()
     {
@@ -223,7 +224,7 @@ public class Grid : MonoBehaviour
     public CellState GetCellState(Vector2 pos)
     {
         Vector2Int cellPos = new Vector2Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
-        if (gridCellsRangeCheck(cellPos))
+        if (GridCellsRangeCheck(cellPos))
         {
             return gridCells[cellPos.x][cellPos.y].cellstate;
         }
@@ -231,13 +232,13 @@ public class Grid : MonoBehaviour
     }
 
     
-    public bool gridCellsRangeCheck(Vector2Int index)
+    public bool GridCellsRangeCheck(Vector2Int index)
     {
         if ((index.x > 0 && index.x <= gridSize.x) && (index.y > 0 && index.y <= gridSize.y))
             return true;
         else return false;
     }
-    public bool gridCellsRangeCheck(Vector2 pos)
+    public bool GridCellsRangeCheck(Vector2 pos)
     {
         if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
             return true;
@@ -261,12 +262,39 @@ public class Grid : MonoBehaviour
     //public float GetTileSize() { return tileSize = Mathf.Abs(gridCells[0][0].gridPos.y - gridCells[0][1].gridPos.y);  }
     public GridCell GetCellByPos(Vector2Int pos)
     {
-        if (gridCellsRangeCheck(pos))
+        if (GridCellsRangeCheck(pos))
             return gridCells[pos.x][pos.y];
         else return null;
     }
+    public GridCell GetCellByPos(Vector2 pos)
+    {
+        if (GridCellsRangeCheck(pos))
+            return gridCells[Mathf.FloorToInt(pos.x)][Mathf.FloorToInt(pos.y)];
+        else return null;
+    }
 
-    
+    public List<GridCell> GetNeigbours(GridCell cell)
+    {
+        List<GridCell> neigbours = new List<GridCell>();
+        for (int x = -1; x<= 1 ; x++)
+        {
+            for (int y = -1; y <= 1;y++)
+            {
+                if (x == 0 && y == 0) continue;
+
+                Vector2Int checkXY = new Vector2Int();
+                checkXY.x = cell.gridPos.x + x;
+                checkXY.y = cell.gridPos.y +y;
+
+                if (checkXY.x >= 0 && checkXY.y >= 0 && checkXY.x < gridSize.x && checkXY.y < gridSize.y)
+                {
+                    neigbours.Add(gridCells[checkXY.x][checkXY.y]);
+                }
+            }
+        }
+        return neigbours;
+    }
+
     public Sector GetBiggestSector()
     {
         Sector sector = sectors[0];
@@ -295,14 +323,21 @@ public class Grid : MonoBehaviour
     public class GridCell
     {
         public Vector2Int gridPos;
-        public Vector2 worldPos;
         public CellState cellstate;
-        //public int index;
 
-        public GridCell(Vector2Int gridPos, Vector2 worldPos, CellState cellState)
+        //PathFindingStuff:
+        public GridCell parent;
+        public int gCost;
+        public int hCost;
+        public int fCost
+        {
+            get { return gCost + hCost; }
+        }
+
+        public GridCell(Vector2Int gridPos, CellState cellState)
         {
             this.gridPos = gridPos;
-            this.worldPos = worldPos;
+            //this.worldPos = worldPos;
             this.cellstate = cellState;
             //this.index = index;
         }

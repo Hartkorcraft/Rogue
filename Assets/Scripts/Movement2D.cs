@@ -5,14 +5,9 @@ using UnityEngine;
 public class Movement2D : MonoBehaviour
 {
 
-    private float time = 0.5f;
-    private IEnumerator coroutine;
-
-
-
     public bool MoveTo(Vector2Int pos, Transform transform)
     {
-        transform.position = Vector2.Lerp(pos, transform.position, Time.deltaTime * time);
+        transform.position = new Vector3(pos.x, pos.y, transform.position.z);
         return true;
     }
 
@@ -21,7 +16,7 @@ public class Movement2D : MonoBehaviour
     {
         if (grid.GetCellState(pos) != Grid.CellState.wall)
         {
-            transform.position = Vector2.Lerp(pos, transform.position, Time.deltaTime * time);
+            transform.position = new Vector3(pos.x,pos.y, transform.position.z);
             return true;
         }
         else return false;
