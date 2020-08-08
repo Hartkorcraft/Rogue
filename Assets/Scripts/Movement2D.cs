@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Movement2D : MonoBehaviour
+public class Movement2D
 {
+    private GameManager gameManager;
+    public Movement2D(GameManager _gameManager)
+    {
+        gameManager = _gameManager;
+    }
+
 
     public bool MoveTo(Vector2Int pos, Transform transform)
     {
+        gameManager.ChangePos(UtilsHart.ToInt2(transform.position), pos);
         transform.position = new Vector3(pos.x, pos.y, transform.position.z);
         return true;
     }
@@ -14,12 +21,18 @@ public class Movement2D : MonoBehaviour
     //MoveTo with Condition
     public bool MoveTo(Vector2Int pos, Transform transform, Grid grid)
     {
-        if (grid.GetCellState(pos) != Grid.CellState.wall)
+        Collider2D hit = Physics2D.OverlapCircle(new Vector2(pos.x + 0.5f, pos.y + 0.5f), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
+        Vector2Int _pos = UtilsHart.ToInt2(transform.position);
+
+
+        if (grid.GetCellState(pos) != Grid.CellState.wall && hit == false && gameManager.CheckPosition(pos) == false)
         {
-            transform.position = new Vector3(pos.x,pos.y, transform.position.z);
+            gameManager.ChangePos(UtilsHart.ToInt2(transform.position), pos);
+            transform.position = new Vector2(pos.x+0.5f,pos.y+0.5f);
             return true;
         }
-        else return false;
+
+        return false;
     }
 
     public bool MoveBy(Vector2 curPos, Vector2 dir, Transform transform)
@@ -38,16 +51,22 @@ public class Movement2D : MonoBehaviour
 
         Vector2 newPos = new Vector2(curPos.x + dir.x, curPos.y + dir.y);
 
-        if (grid.gridCellsRangeCheck(newPos) == false)
+
+        Collider2D hit = Physics2D.OverlapCircle(new Vector2(curPos.x + dir.x, curPos.y + dir.y), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
+
+        if (hit == false)
         {
-            transform.position = newPos;
-            return true;
+            if (grid.gridCellsRangeCheck(newPos) == false)
+            {
+                transform.position = newPos;
+                return true;
+            }
+            else if (grid.GetCellState(newPos) != Grid.CellState.wall)
+            {
+                transform.position = newPos;
+                return true;
+            }
         }
-        else if(grid.GetCellState(newPos) != Grid.CellState.wall)
-        {
-            transform.position = newPos;
-            return true;
-        }
-        else return false;
+        return false;
     }
 }

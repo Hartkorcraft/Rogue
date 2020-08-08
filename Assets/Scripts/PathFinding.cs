@@ -5,12 +5,13 @@ using UnityEngine;
 public class PathFinding : MonoBehaviour
 {
     Grid grid;
-
+    GameManager gameManager;
     public Transform seeker, target;
 
     void Awake()
     {
         grid = GetComponent<Grid>();
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }
 
     void Update()
@@ -20,6 +21,10 @@ public class PathFinding : MonoBehaviour
 
     public List<Grid.GridCell> FindPath(Vector2 startPos, Vector2 endPos)
     {
+        gameManager.ResetPositions();
+        HashSet<Vector2Int> positions = gameManager.GetPositions();
+        positions.Remove(grid.GetCellPos(endPos));
+
 
         //Check if Cells are on grid
         if (grid.GridCellsRangeCheck(startPos) == false || grid.GridCellsRangeCheck(endPos) == false || startPos.Equals(endPos) == true) return null;
@@ -53,9 +58,11 @@ public class PathFinding : MonoBehaviour
                 return path;
             }
 
-            foreach(Grid.GridCell neigbour in grid.GetNeigbours(currentCell))
+            //Debug.Log(grid.GetNeigbours(currentCell).Count);
+            foreach (Grid.GridCell neigbour in grid.GetNeigbours(currentCell))
             {
-                if (neigbour.cellstate == Grid.CellState.wall || closedSet.Contains(neigbour))
+
+                if (neigbour.cellstate == Grid.CellState.wall || closedSet.Contains(neigbour) || positions.Contains(neigbour.gridPos))
                 {
                     continue;
                 }
@@ -75,7 +82,7 @@ public class PathFinding : MonoBehaviour
             }
 
         }
-
+        //Debug.Log("No path");
         return null;
     }
 

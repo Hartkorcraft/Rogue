@@ -36,4 +36,9 @@ public class UtilsHart
         return distance;
 
     }
+
+    static public Vector2Int ToInt2(Vector2 v)
+    {
+        return new Vector2Int(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y));
+    }
 }

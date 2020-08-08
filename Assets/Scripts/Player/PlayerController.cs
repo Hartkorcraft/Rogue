@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour, ITurn
     [SerializeField] private bool canMove = true;
     private bool moved = false;
 
-    private Movement2D movement2D = new Movement2D();
+    private Movement2D movement2D;
 
     [SerializeField] private Transform target;
 
@@ -23,12 +23,15 @@ public class PlayerController : MonoBehaviour, ITurn
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         pathfinding = grid.GetComponent<PathFinding>();
+        movement2D = new Movement2D(gameManager);
+
     }
 
     void Start()
     {
         transform.position = new Vector3(grid.GetPosTransform(transform).x + 0.5f , grid.GetPosTransform(transform).y + 0.5f , transform.position.z) ;
         movePoints = totalMovePoints;
+        gameManager.AddDynamicObject(gameObject);
     }
 
     // Update is called once per frame  
@@ -37,7 +40,7 @@ public class PlayerController : MonoBehaviour, ITurn
 
         Turn();
 
-        if (Input.GetKeyDown(KeyCode.K))
+/*        if (Input.GetKeyDown(KeyCode.K))
         {
             List<Grid.GridCell> path = pathfinding.FindPath(transform.position, target.position);
             if (path != null)
@@ -48,13 +51,13 @@ public class PlayerController : MonoBehaviour, ITurn
                 }
             }
         }
-
+*/
 
     }
 
-    public void Turn()
+    public bool Turn()
     {
-        bool acted = false;
+        //bool acted = false;
 
         //Moving
         {
@@ -77,12 +80,16 @@ public class PlayerController : MonoBehaviour, ITurn
 
             //if (movePoints <= 0) EndTurn();
         }
-
-
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            movePoints--;
+        }
 
         if (movePoints <= 0) EndTurn();
+
+        return true;
     }
-        
+
     public void EndTurn()
     {
         movePoints = totalMovePoints;

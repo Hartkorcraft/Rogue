@@ -247,7 +247,6 @@ public class Grid : MonoBehaviour
 
     public bool gridCellsRangeCheck(Vector3 pos)
     {
-        Debug.Log(pos);
         if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
             return true;
         else return false;
@@ -333,6 +332,7 @@ public class Grid : MonoBehaviour
         {
             get { return gCost + hCost; }
         }
+
 
         public GridCell(Vector2Int gridPos, CellState cellState)
         {
