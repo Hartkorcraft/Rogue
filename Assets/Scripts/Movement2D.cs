@@ -13,7 +13,6 @@ public class Movement2D
 
     public bool MoveTo(Vector2Int pos, Transform transform)
     {
-        gameManager.ChangePos(UtilsHart.ToInt2(transform.position), pos);
         transform.position = new Vector3(pos.x, pos.y, transform.position.z);
         return true;
     }
@@ -21,13 +20,11 @@ public class Movement2D
     //MoveTo with Condition
     public bool MoveTo(Vector2Int pos, Transform transform, Grid grid)
     {
-        Collider2D hit = Physics2D.OverlapCircle(new Vector2(pos.x + 0.5f, pos.y + 0.5f), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
         Vector2Int _pos = UtilsHart.ToInt2(transform.position);
 
 
-        if (grid.GetCellState(pos) != Grid.CellState.wall && hit == false && gameManager.CheckPosition(pos) == false)
+        if (grid.GetCellState(pos) != Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(pos)) == false)
         {
-            gameManager.ChangePos(UtilsHart.ToInt2(transform.position), pos);
             transform.position = new Vector2(pos.x+0.5f,pos.y+0.5f);
             return true;
         }
@@ -35,38 +32,37 @@ public class Movement2D
         return false;
     }
 
-    public bool MoveBy(Vector2 curPos, Vector2 dir, Transform transform)
+    public bool MoveBy(Vector2Int dir, Transform transform)
     {
 
-        Vector2 newPos = new Vector2(curPos.x + dir.x, curPos.y + dir.y);
-        transform.position = newPos;
+        Vector2Int newPos = new Vector2Int(UtilsHart.ToInt2(transform.position).x + dir.x, UtilsHart.ToInt2(transform.position).y + dir.y);
+        transform.position = (Vector2)newPos;
 
         return true;
-
     }
 
     //MoveBy with Condition
-    public bool MoveBy(Vector2 curPos, Vector2 dir, Transform transform, Grid grid)
+    public bool MoveBy(Vector2Int dir, Transform transform, Grid grid)
     {
+        grid.RemoveOccupiedObject(transform.gameObject);
 
-        Vector2 newPos = new Vector2(curPos.x + dir.x, curPos.y + dir.y);
+        Vector2Int newPos = new Vector2Int(UtilsHart.ToInt2(transform.position).x + dir.x, UtilsHart.ToInt2(transform.position).y + dir.y);
 
-
-        Collider2D hit = Physics2D.OverlapCircle(new Vector2(curPos.x + dir.x, curPos.y + dir.y), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
+        Collider2D hit = Physics2D.OverlapCircle(new Vector2(transform.position.x + dir.x, transform.position.y + dir.y), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
 
         if (hit == false)
         {
-            if (grid.gridCellsRangeCheck(newPos) == false)
+            if (grid.gridCellsRangeCheck((Vector2)(newPos)) == false || grid.GetCellState(newPos) != Grid.CellState.wall)
             {
-                transform.position = newPos;
-                return true;
-            }
-            else if (grid.GetCellState(newPos) != Grid.CellState.wall)
-            {
-                transform.position = newPos;
+                grid.OccupyCell(grid.GetCellByPos(newPos),transform.gameObject);
+
+                transform.position = new Vector2(newPos.x + 0.5f, newPos.y + 0.5f);
                 return true;
             }
         }
+        grid.OccupyCell(grid.GetCellByPos(transform.position), transform.gameObject);
+
+
         return false;
     }
 }

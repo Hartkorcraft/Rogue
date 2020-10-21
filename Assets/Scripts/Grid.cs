@@ -51,7 +51,9 @@ public class Grid : MonoBehaviour
 
     //public List<GridCell> path = new List<GridCell>();
 
-    private void Awake()
+    public List<GridCell> occupiedCells = new List<GridCell>();
+
+    public void TileInitialize()
     {
 
         floorTile = ScriptableObject.CreateInstance<Tile>();
@@ -234,20 +236,20 @@ public class Grid : MonoBehaviour
     
     public bool GridCellsRangeCheck(Vector2Int index)
     {
-        if ((index.x > 0 && index.x <= gridSize.x) && (index.y > 0 && index.y <= gridSize.y))
+        if ((index.x >= 0 && index.x <= gridSize.x) && (index.y >= 0 && index.y <= gridSize.y))
             return true;
         else return false;
     }
     public bool GridCellsRangeCheck(Vector2 pos)
     {
-        if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
+        if ((pos.x >= 0 && pos.x <= gridSize.x) && (pos.y >= 0 && pos.y <= gridSize.y))
             return true;
         else return false;
     }
 
     public bool gridCellsRangeCheck(Vector3 pos)
     {
-        if ((pos.x > 0 && pos.x <= gridSize.x) && (pos.y > 0 && pos.y <= gridSize.y))
+        if ((pos.x >= 0 && pos.x <= gridSize.x) && (pos.y >= 0 && pos.y <= gridSize.y))
             return true;
         else return false;
     }
@@ -319,6 +321,42 @@ public class Grid : MonoBehaviour
 
     }
 
+    public void ResetOccupiedCells()
+    {
+        for (int i = occupiedCells.Count - 1; i >= 0; i--)
+        {
+            if (occupiedCells[i].CheckCellObject() == false) occupiedCells.RemoveAt(i);
+        }
+    }
+
+    public void OccupyCell(GridCell cell ,GameObject _object)
+    {
+        if (cell != null)
+        {
+            cell.occupyingObject = _object;
+            if (!occupiedCells.Contains(cell))
+            {
+                occupiedCells.Add(cell);
+            }
+        }
+    }
+
+    public bool IsCellOccupied(GridCell cell)
+    {
+        if (cell.occupyingObject != null) return true;
+        else return false;
+    }
+    public void RemoveOccupiedObject(GameObject _object)
+    {
+        GridCell cell = GetCellByPos(_object.transform.position);
+        if (cell != null)
+        {
+            cell.RemoveOccupiyingObject();
+            occupiedCells.Remove(cell);
+        }
+        else return;
+    }
+
     public class GridCell
     {
         public Vector2Int gridPos;
@@ -333,6 +371,33 @@ public class Grid : MonoBehaviour
             get { return gCost + hCost; }
         }
 
+        public GameObject occupyingObject;
+
+        public void RemoveOccupiyingObject()
+        {
+            occupyingObject = null;
+        }
+
+        public bool CheckCellObject()
+        {
+            Collider2D hit = Physics2D.OverlapCircle(new Vector2(gridPos.x + 0.5f, gridPos.y + 0.5f), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
+            if (hit)
+            {
+                occupyingObject = hit.gameObject;
+                return true;
+            }
+            else
+            {
+                occupyingObject = null;
+                return false;
+            }
+        }
+
+        public bool HasCellObject()
+        {
+            if (occupyingObject == null) return false;
+            else return true;
+        }
 
         public GridCell(Vector2Int gridPos, CellState cellState)
         {

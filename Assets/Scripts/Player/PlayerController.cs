@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, ITurn
+public class PlayerController : MonoBehaviour
 {
     private Grid grid;
     private PathFinding pathfinding;
@@ -32,10 +32,11 @@ public class PlayerController : MonoBehaviour, ITurn
         transform.position = new Vector3(grid.GetPosTransform(transform).x + 0.5f , grid.GetPosTransform(transform).y + 0.5f , transform.position.z) ;
         movePoints = totalMovePoints;
         gameManager.AddDynamicObject(gameObject);
+        grid.OccupyCell(grid.GetCellByPos(transform.position), gameObject);
     }
 
     // Update is called once per frame  
-    void Update()
+    void LateUpdate()
     {
 
         Turn();
@@ -66,7 +67,7 @@ public class PlayerController : MonoBehaviour, ITurn
                 if (moved == false)
                 {
 
-                    movement2D.MoveBy(transform.position, GetMovementDirection(), transform, grid);
+                    movement2D.MoveBy(GetMovementDirection(), transform, grid);
 
                     moved = true;
                     movePoints--;

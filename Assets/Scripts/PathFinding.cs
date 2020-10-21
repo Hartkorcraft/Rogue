@@ -21,9 +21,9 @@ public class PathFinding : MonoBehaviour
 
     public List<Grid.GridCell> FindPath(Vector2 startPos, Vector2 endPos)
     {
-        gameManager.ResetPositions();
-        HashSet<Vector2Int> positions = gameManager.GetPositions();
-        positions.Remove(grid.GetCellPos(endPos));
+       // gameManager.ResetPositions();
+        //HashSet<Vector2Int> positions = gameManager.GetPositions();
+        //positions.Remove(grid.GetCellPos(endPos));
 
 
         //Check if Cells are on grid
@@ -62,7 +62,8 @@ public class PathFinding : MonoBehaviour
             foreach (Grid.GridCell neigbour in grid.GetNeigbours(currentCell))
             {
 
-                if (neigbour.cellstate == Grid.CellState.wall || closedSet.Contains(neigbour) || positions.Contains(neigbour.gridPos))
+
+                if (neigbour.cellstate == Grid.CellState.wall || closedSet.Contains(neigbour) || (neigbour.HasCellObject() == true && neigbour != endCell))
                 {
                     continue;
                 }

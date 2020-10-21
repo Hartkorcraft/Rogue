@@ -18,10 +18,7 @@ public class DungeonGenerator : MonoBehaviour
     private void Awake()
     {
         grid = GetComponent<Grid>();
-    }
 
-    private void Start()
-    {
         StartDungeonGeneration();
     }
 
@@ -37,6 +34,7 @@ public class DungeonGenerator : MonoBehaviour
     public void StartDungeonGeneration()
     {
         Debug.Log("Started Dungeon Generation");
+        grid.TileInitialize();
 
         grid.floorTiles.ClearAllTiles();
         grid.darknessTiles.ClearAllTiles();
