@@ -63,56 +63,80 @@ public class GameManager : MonoBehaviour
         if (positions.Contains(pos)) return true;
         else return false;
     }
-/*
-    public void ResetPositions()
-    {
-        positions.Clear();
 
-        for (int i = dynamicObjects.Count - 1; i >= 0; i--)
+    public void KillAllNpcs()
+    {
+        for (int i = dynamicObjects.Count - 1; i > 0; i--)
         {
-            if (dynamicObjects[i] == null)
+            Destroy(dynamicObjects[i]);
+            dynamicObjects.RemoveAt(i);
+        }
+        Debug.Log("killed all npcs");
+    }
+    public void PrintHelo()
+    {
+        Debug.Log("Gówno!");
+    }
+
+    public void PrintInt(int x)
+    {
+        Debug.Log(x);
+    }
+        public void PrintInt2(int x,int y)
+    {
+        Debug.Log(x + " " + y);
+    }
+
+    /*
+        public void ResetPositions()
+        {
+            positions.Clear();
+
+            for (int i = dynamicObjects.Count - 1; i >= 0; i--)
             {
-                dynamicObjects.RemoveAt(i);
-                continue;
+                if (dynamicObjects[i] == null)
+                {
+                    dynamicObjects.RemoveAt(i);
+                    continue;
+                }
+                positions.Add(UtilsHart.ToInt2(dynamicObjects[i].transform.position));
+
             }
-            positions.Add(UtilsHart.ToInt2(dynamicObjects[i].transform.position));
-           
+
+    *//*        for (int i = 0; i < dynamicObjects.Count; i++)
+            {
+                if(positions.Contains(UtilsHart.ToInt2(dynamicObjects[i].transform.position)))
+                {
+                    grid.SetTile(UtilsHart.ToInt2(dynamicObjects[i].transform.position), Grid.CellState.path);
+                }
+            }*//*
         }
 
-*//*        for (int i = 0; i < dynamicObjects.Count; i++)
+        public void AddPos(Vector2Int pos)
         {
-            if(positions.Contains(UtilsHart.ToInt2(dynamicObjects[i].transform.position)))
-            {
-                grid.SetTile(UtilsHart.ToInt2(dynamicObjects[i].transform.position), Grid.CellState.path);
-            }
-        }*//*
-    }
+            positions.Add(pos);
+        }
 
-    public void AddPos(Vector2Int pos)
-    {
-        positions.Add(pos);
-    }
-
-    public void RemovePos(Vector2Int pos)
-    {
-        positions.Remove(pos);
-    }
-
-    public HashSet<Vector2Int> GetPositions()
-    {
-        if (positions.Count <= 0) ResetPositions();
-        return positions;
-    }
-
-
-    public void ChangePos(Vector2Int pos, Vector2Int newPos)
-    {
-        if (positions.Contains(pos))
+        public void RemovePos(Vector2Int pos)
         {
             positions.Remove(pos);
-            positions.Add(newPos);
         }
 
-    }
-*/
+        public HashSet<Vector2Int> GetPositions()
+        {
+            if (positions.Count <= 0) ResetPositions();
+            return positions;
+        }
+
+
+        public void ChangePos(Vector2Int pos, Vector2Int newPos)
+        {
+            if (positions.Contains(pos))
+            {
+                positions.Remove(pos);
+                positions.Add(newPos);
+            }
+
+        }
+    */
 }

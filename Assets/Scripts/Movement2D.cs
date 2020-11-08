@@ -52,7 +52,7 @@ public class Movement2D
 
         if (hit == false)
         {
-            if (grid.gridCellsRangeCheck((Vector2)(newPos)) == false || grid.GetCellState(newPos) != Grid.CellState.wall)
+            if (grid.GridCellsRangeCheck((Vector2)(newPos)) == false || grid.GetCellState(newPos) != Grid.CellState.wall)
             {
                 grid.OccupyCell(grid.GetCellByPos(newPos),transform.gameObject);
 

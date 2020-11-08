@@ -85,7 +85,7 @@ public class Grid : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                if (gridCellsRangeCheck(pos) == true)
+                if (GridCellsRangeCheck(pos) == true)
                     SetTile(GetCellPos(pos), selectedChangeTile);
 
             }
@@ -247,7 +247,7 @@ public class Grid : MonoBehaviour
         else return false;
     }
 
-    public bool gridCellsRangeCheck(Vector3 pos)
+    public bool GridCellsRangeCheck(Vector3 pos)
     {
         if ((pos.x >= 0 && pos.x <= gridSize.x) && (pos.y >= 0 && pos.y <= gridSize.y))
             return true;
@@ -376,6 +376,11 @@ public class Grid : MonoBehaviour
         public void RemoveOccupiyingObject()
         {
             occupyingObject = null;
+        }
+
+        public GameObject GetOccupiyingObject()
+        {
+            return occupyingObject;
         }
 
         public bool CheckCellObject()
