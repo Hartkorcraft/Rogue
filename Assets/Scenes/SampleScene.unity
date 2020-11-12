@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ad5b2e1e667d2468ee3a049aecafe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveWithMouse: 0
 --- !u!114 &69399581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,7 +766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8be2129489aa04a8c8adbb41562ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugChangeTile: 1
+  debugChangeTile: 0
   selectedChangeTile: 4
   floorSprite: {fileID: 21300000, guid: ecd921e66fc425641a7a3b003c260ccd, type: 3}
   floorTiles: {fileID: 1075676272}
@@ -924,7 +925,7 @@ GameObject:
   - component: {fileID: 1983386185}
   m_Layer: 0
   m_Name: SelectionManager
-  m_TagString: Untagged
+  m_TagString: SelectionManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -942,7 +943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highLightMaterial: {fileID: 2100000, guid: 4cd295347fe1a4d4dbaa86184bfa64f4, type: 2}
-  selection: {fileID: 0}
+  hightlight: {fileID: 0}
 --- !u!4 &1983386186
 Transform:
   m_ObjectHideFlags: 0

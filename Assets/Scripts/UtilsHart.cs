@@ -41,5 +41,9 @@ public class UtilsHart
     {
         return new Vector2Int(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y));
     }
-
+    
+    static public bool isNumeric(string s)
+    {
+        return int.TryParse(s, out int n);
+    }
 }

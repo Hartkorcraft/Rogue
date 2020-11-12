@@ -47,7 +47,7 @@ public class SelectionManager : MonoBehaviour
         {
             if (hightlight != null)
             {
-                Debug.Log(hightlightMaterial);
+                //Debug.Log(hightlightMaterial);
 
                 hightlight.GetComponent<Renderer>().material = hightlightMaterial;
                 hightlight = null;

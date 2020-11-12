@@ -11,8 +11,13 @@ public class GameManager : MonoBehaviour
     private List<GameObject> dynamicObjects = new List<GameObject>();
     private HashSet<Vector2Int> positions = new HashSet<Vector2Int>();
     private GameObject playerObject;
+    private SelectionManager selectionManager;
+
+    [SerializeField] bool moveWithMouse = false;
+
     private void Awake()
     {
+        selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
         playerObject = GameObject.FindGameObjectWithTag("Player");
     }
@@ -73,19 +78,7 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("killed all npcs");
     }
-    public void PrintHelo()
-    {
-        Debug.Log("Gówno!");
-    }
 
-    public void PrintInt(int x)
-    {
-        Debug.Log(x);
-    }
-        public void PrintInt2(int x,int y)
-    {
-        Debug.Log(x + " " + y);
-    }
 
     /*
         public void ResetPositions()

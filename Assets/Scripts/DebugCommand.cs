@@ -20,7 +20,6 @@ public class DebugCommandBase
         _commandDescription = description;
         _commandFormat = format;
     }
-
 }
 
 public class DebugCommand : DebugCommandBase
@@ -36,7 +35,6 @@ public class DebugCommand : DebugCommandBase
     {
         command.Invoke();
     }
-
 }
 public class DebugCommand<T1> : DebugCommandBase
 {
