@@ -63,41 +63,17 @@ public class DungeonGenerator : MonoBehaviour
             Debug.Log("Dungeon was initialized");
         }
 
-        //Setting Up Sectors
+        
+        for (int x = 0; x < grid.GetGridSize().x; x++)
         {
-
-
-            /*
-            for (int i = 0; i < grid.sectors[0].sectorCells.Count; i++)
+            for (int y = 0; y < grid.GetGridSize().y; y++)
             {
-                grid.sectors[0].sectorCells[i].cellstate = Grid.CellState.wall;
+                grid.gridCells[x][y].cellstate = Grid.CellState.floor;
             }
-            */
-        }
-
-        //Setting Up Rooms
-        {
-
-
-            Debug.Log("Rooms set");
-        }
-
-
-        //Setting up Paths
-        {
-
-          
-            Debug.Log("Paths set");
         }
 
 
 
-
-
-        //DebugSectors
-        {
-            
-        }
 
         //Setting Tiles
 
@@ -105,12 +81,6 @@ public class DungeonGenerator : MonoBehaviour
             grid.SetTiles();
         }
 
-
-
-
-
-
-        //grid.DrawGrid();
 
     }
 

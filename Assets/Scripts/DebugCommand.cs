@@ -12,7 +12,7 @@ public class DebugCommandBase
 
     public string commandId { get { return _commandId; } }
     public string commandDescription { get { return _commandDescription; } }
-    public string comandFormat { get { return _commandFormat; } }
+    public string commandFormat { get { return _commandFormat; } }
 
     public DebugCommandBase(string id, string description, string format)
     {

@@ -7,6 +7,8 @@ public class DebugController : MonoBehaviour
 {
     protected GameManager gameManager;
 
+    private Rect inputBox;
+
     [SerializeField] bool showConsole = false;
     string input;
 
@@ -16,8 +18,9 @@ public class DebugController : MonoBehaviour
     public static DebugCommand HELO;
     public static DebugCommand<int> PRINT_INT;
     public static DebugCommand<int,int> PRINT_INT2;
+    public static DebugCommand EDITMAP;
     public static DebugCommand HELP;
-    public static DebugCommand<string> XD; 
+    //public static DebugCommand<string> XD; 
     public static DebugCommand HELPXD;
 
 
@@ -46,24 +49,18 @@ public class DebugController : MonoBehaviour
             Debug.Log(x + " " + y);
         });
 
-        XD = new DebugCommand<string>("XD", "prints commmand description", "XD <string>", (x) =>
+        EDITMAP = new DebugCommand("editmap", "edits map", "editmap", () =>
         {
-            for (int i = 0; i < commandList.Count; i++)
-            {
-                if ((commandList[i] as DebugCommandBase).commandId == x)
-                {
-                    Debug.Log((commandList[i] as DebugCommandBase).commandDescription);
-                    break;
-                }
-            }
-
+            bool editingMap = gameManager.TurnMapEdition();
+            Debug.Log("Editing map " + editingMap);
         });
+
 
         HELP = new DebugCommand("help", "prints commmand list", "help", () =>
         {
             for (int i = 0; i < commandList.Count; i++)
             {
-                Debug.Log((commandList[i] as DebugCommandBase).commandId);
+                Debug.Log((commandList[i] as DebugCommandBase).commandId + " | " + (commandList[i] as DebugCommandBase).commandDescription + " | " + (commandList[i] as DebugCommandBase).commandFormat);
             }
         });
 
@@ -78,7 +75,8 @@ public class DebugController : MonoBehaviour
             HELO,
             PRINT_INT,
             PRINT_INT2,
-            XD,
+            EDITMAP,
+           
             HELP,
             HELPXD
         };
@@ -132,11 +130,12 @@ public class DebugController : MonoBehaviour
         {
             showConsole = !showConsole;
             //Debug.Log("konsola -____-");
+            if (showConsole) GUI.FocusControl("Input");
         }
 
         if(showConsole)
         {
-            if(Input.GetKeyDown(KeyCode.L))
+            if(Input.GetKeyDown(KeyCode.Return))
             {
                 HandleInput();
                 input = "";
@@ -149,11 +148,12 @@ public class DebugController : MonoBehaviour
         if (!showConsole) { return; }
         float y=0f;
 
-        GUI.Box(new Rect(0, y, Screen.width, 30), "");
+        inputBox = new Rect(0, y, Screen.width, 30);
+        GUI.Box(inputBox, "");
         GUI.backgroundColor = new Color(0, 0, 0, 0);
         input = GUI.TextField(new Rect(10f, y + 5f, Screen.width - 20f, 20f), input);
     }
-
+    
     /////////////////////Commends//////////////////
 
 

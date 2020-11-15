@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] bool moveWithMouse = false;
 
+    private bool movingObjects = false;
+    public bool MovingObjects { get { return movingObjects; } set { movingObjects = value; } }
+
+
     private void Awake()
     {
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
@@ -22,8 +26,18 @@ public class GameManager : MonoBehaviour
         playerObject = GameObject.FindGameObjectWithTag("Player");
     }
 
+    private void LateUpdate()
+    {
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            NextTurn();
+        }
+    }
+
     public void NextTurn()
     {
+        Debug.Log("Next Turn");
+
         ResetOccupyingGameobjects();
         //grid.RemoveOccupiedObject(playerObject);
 
@@ -48,12 +62,27 @@ public class GameManager : MonoBehaviour
             grid.OccupyCell(grid.GetCellByPos(dynamicObjects[i].transform.position), dynamicObjects[i]);
         }
     }
-/*
-    public void ResetOccupyingGameobject(GameObject gameObject)
-    {
+    /*
+        public void ResetOccupyingGameobject(GameObject gameObject)
+        {
 
+        }
+    */
+
+    public bool TurnMapEdition()
+    {
+        return grid.TurnMapEdition();
     }
-*/
+
+    public void DrawPath(List<Grid.GridCell> path, int distance)
+    {
+        grid.DrawPath(path, distance);
+    }
+    public void ClearPath()
+    {
+        grid.ClearPath();
+    }
+
     public void AddITurn(ITurn interfaceComponent,GameObject gameObject)
     {
         turnObjects.Add(interfaceComponent);

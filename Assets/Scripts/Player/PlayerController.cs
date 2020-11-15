@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int totalMovePoints = 5;
     [SerializeField] private int movePoints = 5;
 
+//   [SerializeField] bool controlledByMouse = false;
     void Awake()
     {
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
@@ -58,11 +59,14 @@ public class PlayerController : MonoBehaviour
 
     public bool Turn()
     {
+        //gameManager.ResetOccupyingGameobjects();
+
         //bool acted = false;
 
         //Moving
         {
-            if (Input.GetAxisRaw("Horizontal") != 0 || (Input.GetAxisRaw("Vertical") != 0))
+            
+            if (gameManager.MovingObjects == false && (Input.GetAxisRaw("Horizontal") != 0 || (Input.GetAxisRaw("Vertical") != 0)))
             {
                 if (moved == false)
                 {

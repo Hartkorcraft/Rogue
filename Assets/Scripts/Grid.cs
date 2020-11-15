@@ -39,7 +39,10 @@ public class Grid : MonoBehaviour
     private Tile debugTile;
 
     public Sprite pathSprite;
+    public Sprite pathSpriteRed;
+    public Tilemap pathTiles;
     private Tile pathTile;
+    private Tile pathTileRed;
 
 
     [SerializeField]
@@ -74,6 +77,9 @@ public class Grid : MonoBehaviour
         pathTile = ScriptableObject.CreateInstance<Tile>();
         pathTile.sprite = pathSprite;
 
+        pathTileRed = ScriptableObject.CreateInstance<Tile>();
+        pathTileRed.sprite = pathSpriteRed;
+
         debugTile = ScriptableObject.CreateInstance<Tile>();
         debugTile.sprite = debugSprite;
     }
@@ -88,6 +94,30 @@ public class Grid : MonoBehaviour
                 if (GridCellsRangeCheck(pos) == true)
                     SetTile(GetCellPos(pos), selectedChangeTile);
 
+            }
+        }
+    }
+    public bool TurnMapEdition()
+    {
+        return debugChangeTile = !debugChangeTile;
+    }
+
+    public void ClearPath()
+    {
+        pathTiles.ClearAllTiles();
+    }
+
+    public void DrawPath(List<GridCell> path, int distance)
+    {
+        pathTiles.ClearAllTiles();
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (distance > 0)
+                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
+                else pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTileRed);
+                distance--;
             }
         }
     }
