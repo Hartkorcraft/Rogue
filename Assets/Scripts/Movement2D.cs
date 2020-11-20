@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Movement2D
+public class Movement2D : MonoBehaviour
 {
     private GameManager gameManager;
-    public Movement2D(GameManager _gameManager)
-    {
-        gameManager = _gameManager;
-    }
 
+    private void Awake()
+    {
+        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+    }
 
     public bool MoveTo(Vector2Int pos, Transform transform)
     {
@@ -35,55 +35,61 @@ public class Movement2D
     }
 
     //MoveTo with Condition and speed
-    public bool MoveTo(List<Grid.GridCell> path, Npc npc, int movePoints, float speed, Grid grid)
+    public bool MoveTo(List<Grid.GridCell> path, GameObject movingObject, int movePoints, float speed, Grid grid)
     {
 
         for (int i = 0; i < path.Count; i++)
         {
 
-            if (grid.GetCellState(path[i].gridPos) != Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(path[i].gridPos)) == false)
-            {
-
-            }
-            else return false;
+            if (grid.GetCellState(path[i].gridPos) == Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(path[i].gridPos)))
+                return false;
         }
 
-        npc.StartCoroutine(npc.Transition(path, npc.transform,movePoints,speed));
+        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform,movePoints,speed));
         gameManager.ResetOccupyingGameobjects();
 
         return false;
     }
 
+    bool crTransitionRunning = false;
+    public bool CrTransitionRunning { get { return crTransitionRunning; } }
 
-    ////////Debil ze mnie :) 
-    /*
-    //MoveTo with Condition and speed
-    public bool MoveTo(Transform transform, Grid grid, List<Grid.GridCell> path, float speed)
+    public IEnumerator Transition(List<Grid.GridCell> path, Transform transform, int movePoints, float speed)
     {
-        Vector2Int _pos = UtilsHart.ToInt2(transform.position);
+        gameManager.MovingObjects = true;
+        crTransitionRunning = true;
 
-        for (int i = 0; i < path.Count; i++)
+        int moves;
+
+        if (path.Count > movePoints)
         {
-            bool endedMovement = false;
-
-            while (endedMovement == false)
-            {
-                Vector3 pos = new Vector3(path[i].gridPos.x, path[i].gridPos.y, transform.position.z);
-                if (grid.GetCellState(path[i].gridPos) != Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(path[i].gridPos)) == false)
-                {
-                    transform.position = Vector3.MoveTowards(transform.position, pos, speed);
-
-                }
-                else return false;
-
-                if (transform.position == pos) endedMovement = true;
-            }
+            moves = movePoints;
+        }
+        else
+        {
+            moves = path.Count;
         }
 
+        for (int i = 0; i < moves; i++)
+        {
+            Vector3 target = new Vector3(path[i].gridPos.x + 0.5f, path[i].gridPos.y + 0.5f);
+            while (Vector3.Distance(transform.position, target) > 0.001f)
+            {
+                transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
 
-        return true;
+                yield return null;
+            }
+
+        }
+
+        Debug.Log("CrEnded");
+        crTransitionRunning = false;
+        gameManager.MovingObjects = false;
+        yield return null;
+
     }
-    */
+
+
     public bool MoveBy(Vector2Int dir, Transform transform)
     {
 

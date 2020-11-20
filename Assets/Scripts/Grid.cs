@@ -16,11 +16,27 @@ public class Grid : MonoBehaviour
 
     //Normal Stuff
     public enum Direction { up, down, left, right };
-    [SerializeField] public enum CellState { available, floor, entrance, path, wall, darkness, debug, noCell };
+    [SerializeField] public enum CellState 
+    { 
+        available,
+        floor,
+        entrance,
+        path,
+        wall,
+        floorPlank,
+        darkness,
+        debug,
+        noCell
+    };
+
+    public Tilemap tilemap;
 
     public Sprite floorSprite;
     public Tilemap floorTiles;
     private Tile floorTile;
+
+    public Sprite floorPlankSprite;
+    private Tile floorPlankTile;
 
     public Sprite darknessSprite;
     public Tilemap darknessTiles;
@@ -56,11 +72,105 @@ public class Grid : MonoBehaviour
 
     public List<GridCell> occupiedCells = new List<GridCell>();
 
+    [System.Serializable]
+    public class GridCell
+    {
+        public Grid grid;
+        public Vector2Int gridPos;
+        public CellState cellstate;
+
+        //PathFindingStuff:
+        public GridCell parent;
+        public int gCost;
+        public int hCost;
+        public int fCost
+        {
+            get { return gCost + hCost; }
+        }
+
+        public GameObject occupyingObject;
+
+        public void RemoveOccupiyingObject()
+        {
+            occupyingObject = null;
+        }
+
+        public GameObject GetOccupiyingObject()
+        {
+            return occupyingObject;
+        }
+
+        public bool CheckCellObject()
+        {
+            Collider2D hit = Physics2D.OverlapCircle(new Vector2(gridPos.x + 0.5f, gridPos.y + 0.5f), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
+            if (hit)
+            {
+                occupyingObject = hit.gameObject;
+                return true;
+            }
+            else
+            {
+                occupyingObject = null;
+                return false;
+            }
+        }
+
+        public bool HasCellObject()
+        {
+            if (occupyingObject == null) return false;
+            else return true;
+        }
+
+        public GridCell(Vector2Int gridPos, CellState cellState, Grid grid)
+        {
+            this.gridPos = gridPos;
+            this.cellstate = cellState;
+            this.grid = grid;
+        }
+
+    }
+
+    [System.Serializable]
+    public class GridCellDestructable : GridCell, IDamagable
+    {
+        public GridCellDestructable(Vector2Int gridPos, CellState cellState,Grid grid, int totalHealthPoints, int healthPoints, CellState stateAfterDestruction) : base(gridPos, cellState, grid) 
+        {
+            healthSystem = new HealthSystem(totalHealthPoints, healthPoints);
+        }
+
+        private HealthSystem healthSystem;
+        public float TotalHealthPoints { get => healthSystem.TotalHealthPoints; set => healthSystem.TotalHealthPoints = value; }
+        public float HealthPoints { get => healthSystem.HealthPoints; set => healthSystem.HealthPoints = value; }
+        private CellState stateAfterDestruction;
+
+        public void Damage(float damage)
+        {
+            HealthPoints = HealthPoints - damage;
+            
+            if (HealthPoints <= 0) { Kill(); }
+        }
+
+        public void Kill()
+        {
+
+            grid.SetTile(gridPos , stateAfterDestruction);
+            Debug.Log("Destroyed Tile");
+        }
+
+        public void helo()
+        {
+            Debug.Log("Helo!");
+        }
+    }
+
     public void TileInitialize()
     {
 
         floorTile = ScriptableObject.CreateInstance<Tile>();
         floorTile.sprite = floorSprite;
+
+        floorPlankTile = ScriptableObject.CreateInstance<Tile>();
+        floorPlankTile.sprite = floorPlankSprite;
 
         darknessTile = ScriptableObject.CreateInstance<Tile>();
         darknessTile.sprite = darknessSprite;
@@ -121,6 +231,50 @@ public class Grid : MonoBehaviour
             }
         }
     }
+    private void TileSwitch(Vector2Int pos)
+    {
+        switch (gridCells[pos.x][pos.y].cellstate)
+        {
+            case CellState.available:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                break;
+
+            case CellState.darkness:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), darknessTile);
+                break;
+
+            case CellState.floor:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), floorTile);
+                break;
+
+            case CellState.floorPlank:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), floorPlankTile);
+                break;
+
+            case CellState.entrance:
+
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), entranceTile);
+                break;
+
+            case CellState.wall:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), wallTile);
+                break;
+
+            case CellState.path:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
+                break;
+
+
+            case CellState.debug:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
+                break;
+
+            default:
+                Debug.LogWarning("No cell state?");
+                break;
+        }
+    }
+
 
     public void SetTiles()
     {
@@ -128,122 +282,60 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                switch (gridCells[x][y].cellstate)
-                {
-                    case CellState.available:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), debugTile);
-                        break;
-
-                    case CellState.darkness:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), darknessTile);
-                        break;
-
-                    case CellState.floor:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), floorTile);
-                        break;
-
-                    case CellState.wall:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), wallTile);
-                        break;
-
-                    case CellState.path:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), pathTile);
-                        break;
-                    case CellState.entrance:
-
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), entranceTile);
-                        break;
-
-                    case CellState.debug:
-                        darknessTiles.SetTile(new Vector3Int(x, y, 0), debugTile);
-                        break;
-
-                    default:
-                        Debug.LogWarning("No cell state?");
-                        break;
-                }
+                TileSwitch(new Vector2Int(x, y));
 
             }
 
         }
-    } 
-    public void SetTile(Vector2Int pos, CellState cellState)
+    }
+
+    public void SetTile(GridCell gridCell)
     {
-            gridCells[pos.x][pos.y].cellstate = cellState;
-            switch (gridCells[pos.x][pos.y].cellstate)
-            {
-                case CellState.available:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
-                    break;
-
-                case CellState.darkness:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), darknessTile);
-                    break;
-
-                case CellState.floor:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), floorTile);
-                    break;
-
-                case CellState.wall:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), wallTile);
-                    break;
-
-                case CellState.path:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
-                    break;
-                case CellState.entrance:
-
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), entranceTile);
-                    break;
-
-                case CellState.debug:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
-                    break;
-
-                default:
-                    Debug.LogWarning("No cell state?");
-                    break;
-            }
+            gridCells[gridCell.gridPos.x][gridCell.gridPos.y] = gridCell;
+        TileSwitch(gridCell.gridPos);
         
     }
-    
+    public void SetTile(GridCellDestructable gridCell)
+    {
+        gridCells[gridCell.gridPos.x][gridCell.gridPos.y] = gridCell;
+        TileSwitch(gridCell.gridPos);
+    }
+
+    public void SetTile(Vector2Int pos, CellState cellState)
+    {
+        gridCells[pos.x][pos.y].cellstate = cellState;
+        TileSwitch(pos);
+
+    }
+
+    public void SetTile(Vector2Int pos, CellState cellState, CellState stateAfterDestruction)
+    {
+        GridCellDestructable newCell = new GridCellDestructable(gridCells[pos.x][pos.y].gridPos, gridCells[pos.x][pos.y].cellstate, this, 1, 1, stateAfterDestruction);
+        gridCells[pos.x][pos.y] = newCell;
+        gridCells[pos.x][pos.y].cellstate = cellState;
+        TileSwitch(pos);
+
+    }
+
+    public void SetTile(Vector2Int pos, CellState cellState, bool destructable, int totalHealthPoints, int healthPoints, CellState stateAfterDestruction)
+    {
+        if (destructable)
+        {
+            GridCellDestructable newCell = new GridCellDestructable(gridCells[pos.x][pos.y].gridPos, gridCells[pos.x][pos.y].cellstate, this, totalHealthPoints, healthPoints, stateAfterDestruction);
+            gridCells[pos.x][pos.y] = newCell;
+            gridCells[pos.x][pos.y].cellstate = cellState;
+            TileSwitch(pos);
+        }
+        else
+        {
+            SetTile(pos, cellState);
+        }
+    }
+
+
     public void SetTile(Vector2Int pos)
     {
-            switch (gridCells[pos.x][pos.y].cellstate)
-            {
-                case CellState.available:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
-                    break;
-
-                case CellState.darkness:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), darknessTile);
-                    break;
-
-                case CellState.floor:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), floorTile);
-                    break;
-
-                case CellState.wall:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), wallTile);
-                    break;
-
-                case CellState.path:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
-                    break;
-                case CellState.entrance:
-
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), entranceTile);
-                    break;
-
-                case CellState.debug:
-                    darknessTiles.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
-                    break;
-
-                default:
-                    Debug.LogWarning("No cell state?");
-                    break;
-            }
-        
+        TileSwitch(pos);    
     }
 
     public Vector2Int GetGridSize() { return gridSize; }
@@ -385,64 +477,6 @@ public class Grid : MonoBehaviour
             occupiedCells.Remove(cell);
         }
         else return;
-    }
-
-    public class GridCell
-    {
-        public Vector2Int gridPos;
-        public CellState cellstate;
-
-        //PathFindingStuff:
-        public GridCell parent;
-        public int gCost;
-        public int hCost;
-        public int fCost
-        {
-            get { return gCost + hCost; }
-        }
-
-        public GameObject occupyingObject;
-
-        public void RemoveOccupiyingObject()
-        {
-            occupyingObject = null;
-        }
-
-        public GameObject GetOccupiyingObject()
-        {
-            return occupyingObject;
-        }
-
-        public bool CheckCellObject()
-        {
-            Collider2D hit = Physics2D.OverlapCircle(new Vector2(gridPos.x + 0.5f, gridPos.y + 0.5f), 0.5f, 1 << LayerMask.NameToLayer("Blocked"));
-            if (hit)
-            {
-                occupyingObject = hit.gameObject;
-                return true;
-            }
-            else
-            {
-                occupyingObject = null;
-                return false;
-            }
-        }
-
-        public bool HasCellObject()
-        {
-            if (occupyingObject == null) return false;
-            else return true;
-        }
-
-        public GridCell(Vector2Int gridPos, CellState cellState)
-        {
-            this.gridPos = gridPos;
-            //this.worldPos = worldPos;
-            this.cellstate = cellState;
-            //this.index = index;
-        }
-
-
     }
 
     [System.Serializable]

@@ -17,7 +17,7 @@ public class SelectionManager : MonoBehaviour
 
     [SerializeField] private GameObject pointer;
 
-    bool canSelect = true;
+    [SerializeField] private bool canSelect = true;
     public bool CanSelect { get { return canSelect; } set { canSelect = value; } }
 
 
@@ -66,36 +66,38 @@ public class SelectionManager : MonoBehaviour
 
 
         //HighLighting
-        if (thing != null)
         {
-            _selectionRenderer = thing.GetComponent<Renderer>();
-            if (_selectionRenderer != null)
+            if (thing != null)
             {
-                grid.ClearPath();
-                if(hightlight != null && thing.transform != hightlight)
+                _selectionRenderer = thing.GetComponent<Renderer>();
+                if (_selectionRenderer != null)
                 {
+                    grid.ClearPath();
+                    if (hightlight != null && thing.transform != hightlight)
+                    {
+                        hightlight.GetComponent<Renderer>().material = hightlightMaterial;
+                        hightlight = null;
+                        hightlightMaterial = null;
+                    }
+
+                    hightlight = thing.transform;
+
+                    if (hightlightMaterial == null)
+                    { hightlightMaterial = _selectionRenderer.material; }
+
+                    _selectionRenderer.material = highLightMaterial;
+                }
+            }
+            else
+            {
+                if (hightlight != null)
+                {
+                    //Debug.Log(hightlightMaterial);
+
                     hightlight.GetComponent<Renderer>().material = hightlightMaterial;
                     hightlight = null;
                     hightlightMaterial = null;
                 }
-
-                hightlight = thing.transform;
-
-                if (hightlightMaterial == null)
-                { hightlightMaterial = _selectionRenderer.material; }
-
-                _selectionRenderer.material = highLightMaterial;
-            }
-        }
-        else
-        {
-            if (hightlight != null)
-            {
-                //Debug.Log(hightlightMaterial);
-
-                hightlight.GetComponent<Renderer>().material = hightlightMaterial;
-                hightlight = null;
-                hightlightMaterial = null;
             }
         }
 
@@ -105,17 +107,17 @@ public class SelectionManager : MonoBehaviour
             if (hightlight)
             {
                 pointer.SetActive(true);
-                pointer.transform.position = new Vector3(thing.transform.position.x, thing.transform.position.y + 1.0f,transform.position.z + 5f);
+                pointer.transform.position = new Vector3(thing.transform.position.x, thing.transform.position.y + 1.0f, 0f);
             }
             else
             {
                 pointer.SetActive(false);
             }
         }
-        
+
 
         //Selection
-        if(hightlight && Input.GetMouseButtonDown(0) && canSelect)
+        if (hightlight && Input.GetMouseButtonDown(0) && canSelect && gameManager.Targeting == false)
         {
             if(selection.Contains(hightlight))
             {

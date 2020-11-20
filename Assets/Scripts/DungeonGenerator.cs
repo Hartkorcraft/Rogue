@@ -54,7 +54,7 @@ public class DungeonGenerator : MonoBehaviour
 
                 for (int y = 0; y < grid.GetGridSize().y; y++)
                 {
-                    grid.gridCells[x][y] = new Grid.GridCell(new Vector2Int(x, y), Grid.CellState.available);
+                    grid.gridCells[x][y] = new Grid.GridCell(new Vector2Int(x, y), Grid.CellState.available, grid);
 
                     initialSector.sectorCells.Add(grid.gridCells[x][y]);
                 }

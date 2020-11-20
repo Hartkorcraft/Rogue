@@ -16,8 +16,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool moveWithMouse = false;
 
     private bool movingObjects = false;
-    public bool MovingObjects { get { return movingObjects; } set { movingObjects = value; } }
+    public bool MovingObjects { get => movingObjects;  set => movingObjects = value;}
 
+
+    private bool targeting = false;
+    public bool Targeting { get => targeting; set => targeting = value; }
 
     private void Awake()
     {

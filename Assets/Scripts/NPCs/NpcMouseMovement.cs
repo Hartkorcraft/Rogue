@@ -5,12 +5,29 @@ using UnityEngine;
 public class NpcMouseMovement : Npc
 {
     SelectionManager selectionManager;
-    [SerializeField] float speed;
-    public bool selected { get { if (selectionManager.GetCurSelection() != null && selectionManager.GetCurSelection().Equals(this.transform)) return true; else return false; ; } }
+    cakeslice.Outline outline;
+    public bool selected 
+    {
+        get 
+        {
+            if (selectionManager.GetCurSelection() != null && selectionManager.GetCurSelection().Equals(this.transform))
+            {
+                return true;
+            }
+            else return false; ; 
+        } 
+    }
 
     protected override void Awake()
     {
         base.Awake();
+
+        if (GetComponent<cakeslice.Outline>() == null)
+        {
+            outline = gameObject.AddComponent<cakeslice.Outline>();
+            //outline.enabled = false;
+        }
+
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
     }
 
@@ -31,6 +48,8 @@ public class NpcMouseMovement : Npc
             selectionManager.ChangeCurSelection(null);
         }*/
 
+        if (selected) outline.enabled = true; else outline.enabled = false;
+
         if (selected && selectionManager.IsHighlighting() == false)
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -43,7 +62,7 @@ public class NpcMouseMovement : Npc
 
             gameManager.DrawPath(path, movePoints);
 
-            if (Input.GetMouseButtonDown(0) && movePoints > 0 && gameManager.MovingObjects == false)
+            if (Input.GetMouseButtonDown(0) && movePoints > 0 && gameManager.MovingObjects == false && canMove)
             {
                 int pathCellNum = 0;
                 while (movePoints > 0)
@@ -53,8 +72,8 @@ public class NpcMouseMovement : Npc
                         //movePoints--;
                         //movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
 
-                        if (base.CrRunning == false)
-                        movement2D.MoveTo(path,this,movePoints,speed,grid);
+                        if (movement2D.CrTransitionRunning == false)
+                        movement2D.MoveTo(path,this.gameObject,movePoints,speed,grid);
 
                         pathCellNum++;
                         if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(pos.x, pos.y))) break;
