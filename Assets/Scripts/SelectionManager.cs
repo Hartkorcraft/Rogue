@@ -53,6 +53,12 @@ public class SelectionManager : MonoBehaviour
         currentSelection = selection;
     }
 
+    public void RemoveSelection(Transform _selection)
+    {
+        if (currentSelection == _selection) currentSelection = null;
+        selection.Remove(_selection);
+    }
+
     void Update()
     {
 

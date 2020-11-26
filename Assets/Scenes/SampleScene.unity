@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 69399579}
   - component: {fileID: 69399580}
   - component: {fileID: 69399581}
-  - component: {fileID: 69399582}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -182,18 +181,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   showConsole: 0
---- !u!114 &69399582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 69399578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48fe5ccd9cae580438d6d594dffca9ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!850595691 &121275082
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -291,6 +278,7 @@ MonoBehaviour:
   healthSystem:
     totalHealthPoints: 1
     healthPoints: 1
+    deathParticle: {fileID: 0}
   playerPos: {fileID: 1372705519}
   canMove: 1
 --- !u!212 &138565621
@@ -712,6 +700,16 @@ PrefabInstance:
       propertyPath: movePoints
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.totalHealthPoints
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.healthPoints
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_Name
@@ -799,12 +797,12 @@ PrefabInstance:
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.healthPoints
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.totalHealthPoints
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
@@ -1166,12 +1164,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canMove: 1
-  target: {fileID: 0}
   totalMovePoints: 0
   movePoints: 4
   moveWithMouse: 1
   endTurnAfterMovePoint: 0
   speed: 40
+  targeting: 0
 --- !u!58 &1372705521
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1266,22 +1264,24 @@ MonoBehaviour:
   debugChangeTile: 0
   selectedChangeTile: 4
   tilemap: {fileID: 1998503799}
-  floorSprite: {fileID: 21300000, guid: ecd921e66fc425641a7a3b003c260ccd, type: 3}
   floorTiles: {fileID: 1075676272}
+  darknessTiles: {fileID: 1982245785}
+  wallTiles: {fileID: 261661301}
+  pathTiles: {fileID: 1904599632}
+  floorSprite: {fileID: 21300000, guid: ecd921e66fc425641a7a3b003c260ccd, type: 3}
   floorPlankSprite: {fileID: 21300000, guid: b71769ea82aaba043b6100400aa51452, type: 3}
   darknessSprite: {fileID: 21300000, guid: 3d09915ec09b0b94889249e5ccd5c94d, type: 3}
-  darknessTiles: {fileID: 1982245785}
   wallSprite: {fileID: 21300000, guid: a190392ef6879904091cfa8426057448, type: 3}
   wallBlockedSprite: {fileID: 21300000, guid: 04b31326d5ef7e3438f259f6ba6e8885, type: 3}
-  wallTiles: {fileID: 261661301}
   entranceSprite: {fileID: 21300000, guid: 7a2c599479ccd8044bea6ff264555923, type: 3}
   debugSprite: {fileID: 21300000, guid: 0ef9bdf3b51c1154996e37dfd621803a, type: 3}
   pathSprite: {fileID: 21300000, guid: d4a2747652554e24d86ff91f5ac139d5, type: 3}
   pathSpriteRed: {fileID: 21300000, guid: 7d187c313b1172f47b2c4e4b5d9dcf0c, type: 3}
-  pathTiles: {fileID: 1904599632}
+  ruinSprite: {fileID: 21300000, guid: 931441789bae5404f90e0830576480e8, type: 3}
   gridSize: {x: 15, y: 15}
   sectors: []
   rooms: []
+  occupiedCells: []
 --- !u!114 &1733676700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1296,6 +1296,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seeker: {fileID: 1372705519}
   target: {fileID: 0}
+--- !u!1 &1848512714
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1848512716}
+  - component: {fileID: 1848512715}
+  m_Layer: 0
+  m_Name: test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1848512715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848512714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48fe5ccd9cae580438d6d594dffca9ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newCell:
+    grid: {fileID: 0}
+    gridPos: {x: 4, y: 4}
+    cellstate: 7
+    occupyingObject: {fileID: 0}
+    gCost: 0
+    hCost: 0
+    healthSystem:
+      totalHealthPoints: 1
+      healthPoints: 1
+      deathParticle: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
+        type: 3}
+    stateAfterDestruction: 5
+--- !u!4 &1848512716
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848512714}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.324995, y: 6.5145464, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1904599631
 GameObject:
   m_ObjectHideFlags: 0
@@ -1565,6 +1621,7 @@ MonoBehaviour:
   hightlight: {fileID: 0}
   currentSelection: {fileID: 0}
   pointer: {fileID: 28908875344831425, guid: 83bdb8b021930d945bded7b6907058f9, type: 3}
+  canSelect: 1
 --- !u!4 &1983386186
 Transform:
   m_ObjectHideFlags: 0
@@ -1768,6 +1825,16 @@ PrefabInstance:
         type: 3}
       propertyPath: movePoints
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.totalHealthPoints
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.healthPoints
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}

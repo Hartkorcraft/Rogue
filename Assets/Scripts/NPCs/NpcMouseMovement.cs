@@ -50,12 +50,18 @@ public class NpcMouseMovement : Npc
 
         if (selected) outline.enabled = true; else outline.enabled = false;
 
+        MouseMovement();
+    }
+
+    private void MouseMovement()
+    {
+
         if (selected && selectionManager.IsHighlighting() == false)
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             gameManager.ResetOccupyingGameobjects();
-            List<Grid.GridCell> path = new List<Grid.GridCell>();
+            List<GridCell> path = new List<GridCell>();
 
             //if (movePoints > 0) 
             path = pathfinding.FindPath(transform.position, pos);
@@ -73,7 +79,7 @@ public class NpcMouseMovement : Npc
                         //movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
 
                         if (movement2D.CrTransitionRunning == false)
-                        movement2D.MoveTo(path,this.gameObject,movePoints,speed,grid);
+                            movement2D.MoveTo(path, this.gameObject, movePoints, speed, grid);
 
                         pathCellNum++;
                         if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(pos.x, pos.y))) break;
@@ -89,6 +95,12 @@ public class NpcMouseMovement : Npc
                         }
                         movePoints = movePoints - moves;
 
+                        if (movePoints <= 0)
+                        {
+                            selectionManager.RemoveSelection(this.transform);
+                            grid.ClearPath();
+                        }
+
                         break;
                     }
                     else
@@ -98,10 +110,11 @@ public class NpcMouseMovement : Npc
                         break;
                     }
                 }
-                
+
                 Debug.Log("Moved");
 
             }
         }
+
     }
 }

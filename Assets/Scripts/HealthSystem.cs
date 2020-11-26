@@ -7,7 +7,8 @@ public class HealthSystem
 {
     [SerializeField] private float totalHealthPoints = 1;
     [SerializeField] private float healthPoints = 1;
-
+    [SerializeField] private GameObject deathParticle;
+    public GameObject DeathParticle { get => deathParticle; }
     public float TotalHealthPoints { get => totalHealthPoints; set => totalHealthPoints = value; }
     public float HealthPoints {get => healthPoints; set => healthPoints = value;}
 

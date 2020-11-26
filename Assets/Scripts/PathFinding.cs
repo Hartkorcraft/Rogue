@@ -19,9 +19,9 @@ public class PathFinding : MonoBehaviour
 
     }
 
-    public List<Grid.GridCell> FindPath(Vector2 startPos, Vector2 endPos)
+    public List<GridCell> FindPath(Vector2 startPos, Vector2 endPos)
     {
-       // gameManager.ResetPositions();
+        // gameManager.ResetPositions();
         //HashSet<Vector2Int> positions = gameManager.GetPositions();
         //positions.Remove(grid.GetCellPos(endPos));
 
@@ -31,16 +31,16 @@ public class PathFinding : MonoBehaviour
 
 
         //Debug.Log("Finding Path");
-        Grid.GridCell startCell = grid.GetCellByPos(startPos);
-        Grid.GridCell endCell = grid.GetCellByPos(endPos);
+        GridCell startCell = grid.GetCellByPos(startPos);
+        GridCell endCell = grid.GetCellByPos(endPos);
 
-        List<Grid.GridCell> openSet = new List<Grid.GridCell>();
-        HashSet<Grid.GridCell> closedSet = new HashSet<Grid.GridCell>();
+        List<GridCell> openSet = new List<GridCell>();
+        HashSet<GridCell> closedSet = new HashSet<GridCell>();
         openSet.Add(startCell);
 
         while (openSet.Count > 0)
         {
-            Grid.GridCell currentCell = openSet[0];
+            GridCell currentCell = openSet[0];
             for (int i = 0; i < openSet.Count; i++)
             {
                 if (openSet[i].fCost < currentCell.fCost || openSet[i].fCost == currentCell.fCost && openSet[i].hCost < currentCell.hCost)
@@ -52,30 +52,46 @@ public class PathFinding : MonoBehaviour
             openSet.Remove(currentCell);
             closedSet.Add(currentCell);
 
-            if(currentCell == endCell)
+            if (currentCell == endCell)
             {
-                List<Grid.GridCell> path = RetracePath(startCell, endCell);
+                List<GridCell> path = RetracePath(startCell, endCell);
                 return path;
             }
 
-            //Debug.Log(grid.GetNeigbours(currentCell).Count);
-            foreach (Grid.GridCell neigbour in grid.GetNeigbours(currentCell))
+            foreach (GridCell neigbour in grid.GetNeigbours(currentCell))
             {
 
-
-                if (neigbour.cellstate == Grid.CellState.wall || closedSet.Contains(neigbour) || (neigbour.HasCellObject() == true && neigbour != endCell))
+                if (closedSet.Contains(neigbour) || (neigbour.HasCellObject() == true && neigbour != endCell))
                 {
                     continue;
                 }
+                else
+                {
+                    bool blockPathfinding = false;
+
+                    //Put Here to block pathfinding
+                    switch (neigbour.cellstate)
+                    {
+                        case Grid.CellState.wall:
+                            blockPathfinding = true;
+                            break;
+
+
+                        default:
+                            blockPathfinding = false;
+                            break;
+                    }
+                    if (blockPathfinding) continue;
+                }
 
                 int newCostToNeighbour = currentCell.gCost + GetDistance(currentCell, neigbour);
-                if(newCostToNeighbour < neigbour.gCost || !openSet.Contains(neigbour))
+                if (newCostToNeighbour < neigbour.gCost || !openSet.Contains(neigbour))
                 {
                     neigbour.gCost = newCostToNeighbour;
                     neigbour.hCost = GetDistance(neigbour, endCell);
                     neigbour.parent = currentCell;
 
-                    if(openSet.Contains(neigbour) == false)
+                    if (openSet.Contains(neigbour) == false)
                     {
                         openSet.Add(neigbour);
                     }
@@ -87,10 +103,22 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
-    private List<Grid.GridCell> RetracePath(Grid.GridCell startNode, Grid.GridCell endNode)
+    public List<GridCell> FindCellsBetweenTwoPoints(Vector2 startPos, Vector2 endPos)
     {
-        List<Grid.GridCell> path = new List<Grid.GridCell>();
-        Grid.GridCell curCell = endNode;
+        GridCell startCell = grid.GetCellByPos(startPos);
+        GridCell endCell = grid.GetCellByPos(endPos);
+
+        List<GridCell> path = new List<GridCell>();
+
+
+        return path;
+    }
+
+
+    private List<GridCell> RetracePath(GridCell startNode, GridCell endNode)
+    {
+        List<GridCell> path = new List<GridCell>();
+        GridCell curCell = endNode;
 
         while(curCell != startNode)
         {
@@ -102,7 +130,7 @@ public class PathFinding : MonoBehaviour
         return path;
     }
 
-    int GetDistance(Grid.GridCell cellA, Grid.GridCell cellB)
+    int GetDistance(GridCell cellA, GridCell cellB)
     {
         int distantX = Mathf.Abs(cellA.gridPos.x - cellB.gridPos.x);
         int distantY = Mathf.Abs(cellA.gridPos.y - cellB.gridPos.y);

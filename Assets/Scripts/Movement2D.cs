@@ -35,7 +35,7 @@ public class Movement2D : MonoBehaviour
     }
 
     //MoveTo with Condition and speed
-    public bool MoveTo(List<Grid.GridCell> path, GameObject movingObject, int movePoints, float speed, Grid grid)
+    public bool MoveTo(List<GridCell> path, GameObject movingObject, int movePoints, float speed, Grid grid)
     {
 
         for (int i = 0; i < path.Count; i++)
@@ -54,7 +54,7 @@ public class Movement2D : MonoBehaviour
     bool crTransitionRunning = false;
     public bool CrTransitionRunning { get { return crTransitionRunning; } }
 
-    public IEnumerator Transition(List<Grid.GridCell> path, Transform transform, int movePoints, float speed)
+    public IEnumerator Transition(List<GridCell> path, Transform transform, int movePoints, float speed)
     {
         gameManager.MovingObjects = true;
         crTransitionRunning = true;
@@ -85,6 +85,7 @@ public class Movement2D : MonoBehaviour
         Debug.Log("CrEnded");
         crTransitionRunning = false;
         gameManager.MovingObjects = false;
+        gameManager.ResetOccupyingGameobjects();
         yield return null;
 
     }

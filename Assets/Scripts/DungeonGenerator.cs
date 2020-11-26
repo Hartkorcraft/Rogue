@@ -45,16 +45,16 @@ public class DungeonGenerator : MonoBehaviour
 
         //Initializing Dungeon
         {
-            grid.gridCells = new Grid.GridCell[grid.GetGridSize().x][];
+            grid.gridCells = new GridCell[grid.GetGridSize().x][];
             Grid.Sector initialSector = new Grid.Sector(new Vector2Int(0, 0), grid.GetGridSize());
             grid.sectors.Add(initialSector);
             for (int x = 0; x < grid.GetGridSize().x; x++)
             {
-                grid.gridCells[x] = new Grid.GridCell[grid.GetGridSize().y];
+                grid.gridCells[x] = new GridCell[grid.GetGridSize().y];
 
                 for (int y = 0; y < grid.GetGridSize().y; y++)
                 {
-                    grid.gridCells[x][y] = new Grid.GridCell(new Vector2Int(x, y), Grid.CellState.available, grid);
+                    grid.gridCells[x][y] = new GridCell(new Vector2Int(x, y), Grid.CellState.available, grid);
 
                     initialSector.sectorCells.Add(grid.gridCells[x][y]);
                 }

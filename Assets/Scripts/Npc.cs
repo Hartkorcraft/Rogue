@@ -44,7 +44,7 @@ public class Npc : MonoBehaviour, ITurn, IDamagable
     {
         gameManager.ResetOccupyingGameobjects();
         movePoints = totalMovePoints;
-        List<Grid.GridCell> path = new List<Grid.GridCell>();
+        List<GridCell> path = new List<GridCell>();
         if (movePoints>0)  path = pathfinding.FindPath(transform.position, playerPos.position);
 
         int pathCellNum = 0;
@@ -76,6 +76,8 @@ public class Npc : MonoBehaviour, ITurn, IDamagable
 
     public void Kill()
     {
+        gameManager.Kill(this.gameObject);
+        if(healthSystem.DeathParticle != null) { Instantiate(healthSystem.DeathParticle, transform.position, healthSystem.DeathParticle.transform.rotation); }
         Debug.Log("Killed");
     }
 

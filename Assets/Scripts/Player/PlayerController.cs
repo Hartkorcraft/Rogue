@@ -7,41 +7,19 @@ public class PlayerController : MonoBehaviour
     private Grid grid;
     private PathFinding pathfinding;
     private GameManager gameManager;
-
-    [SerializeField] private bool canMove = true;
-    private bool moved = false;
-
     private Movement2D movement2D;
+    SelectionManager selectionManager;
 
-    [SerializeField] private Transform target;
-
+    cakeslice.Outline outline;
+    private bool moved = false;
+    [SerializeField] private bool canMove = true;
     [SerializeField] private int totalMovePoints = 5;
     [SerializeField] private int movePoints = 5;
-
-
-    SelectionManager selectionManager;
-    cakeslice.Outline outline;
-
     [SerializeField] private bool moveWithMouse = false;
     [SerializeField] private bool endTurnAfterMovePoint = false;
     [SerializeField] protected float speed = 40f;
-
     [SerializeField] private bool targeting = false;
 
-
-    public bool selected
-    {
-        get
-        {
-            if (selectionManager.GetCurSelection() != null && selectionManager.GetCurSelection().Equals(this.transform))
-            {
-                return true;
-            }
-            else return false; ;
-        }
-    }
-
-//   [SerializeField] bool controlledByMouse = false;
     void Awake()
     {
 
@@ -79,6 +57,19 @@ public class PlayerController : MonoBehaviour
         Turn();
 
 
+    }
+
+
+    public bool selected
+    {
+        get
+        {
+            if (selectionManager.GetCurSelection() != null && selectionManager.GetCurSelection().Equals(this.transform))
+            {
+                return true;
+            }
+            else return false; ;
+        }
     }
 
     public bool Turn()
@@ -128,7 +119,7 @@ public class PlayerController : MonoBehaviour
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
                 gameManager.ResetOccupyingGameobjects();
-                List<Grid.GridCell> path = new List<Grid.GridCell>();
+                List<GridCell> path = new List<GridCell>();
 
                 //if (movePoints > 0) 
                 path = pathfinding.FindPath(transform.position, pos);
@@ -217,7 +208,7 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         gameManager.ResetOccupyingGameobjects();
-        List<Grid.GridCell> path = new List<Grid.GridCell>();
+        List<GridCell> path = new List<GridCell>();
 
         path = pathfinding.FindPath(transform.position, pos);
         gameManager.DrawPath(path, movePoints);
@@ -233,9 +224,9 @@ public class PlayerController : MonoBehaviour
                 idamagableObject.Damage(1);
             }
 
-            if(grid.GetCellByPos(pos) is Grid.GridCellDestructable)
+            if(grid.GetCellByPos(pos) is GridCellDestructable)
             {
-                Grid.GridCellDestructable newCell = (Grid.GridCellDestructable)grid.GetCellByPos(pos);
+                GridCellDestructable newCell = (GridCellDestructable)grid.GetCellByPos(pos);
                 newCell.Damage(1);
             }
 

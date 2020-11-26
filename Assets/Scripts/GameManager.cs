@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
         return grid.TurnMapEdition();
     }
 
-    public void DrawPath(List<Grid.GridCell> path, int distance)
+    public void DrawPath(List<GridCell> path, int distance)
     {
         grid.DrawPath(path, distance);
     }
@@ -111,57 +111,18 @@ public class GameManager : MonoBehaviour
         Debug.Log("killed all npcs");
     }
 
-
-    /*
-        public void ResetPositions()
+    public void Kill(GameObject dynamicObject)
+    {
+        if (dynamicObjects.Contains(dynamicObject))
         {
-            positions.Clear();
-
-            for (int i = dynamicObjects.Count - 1; i >= 0; i--)
-            {
-                if (dynamicObjects[i] == null)
-                {
-                    dynamicObjects.RemoveAt(i);
-                    continue;
-                }
-                positions.Add(UtilsHart.ToInt2(dynamicObjects[i].transform.position));
-
-            }
-
-    *//*        for (int i = 0; i < dynamicObjects.Count; i++)
-            {
-                if(positions.Contains(UtilsHart.ToInt2(dynamicObjects[i].transform.position)))
-                {
-                    grid.SetTile(UtilsHart.ToInt2(dynamicObjects[i].transform.position), Grid.CellState.path);
-                }
-            }*//*
+            dynamicObjects.Remove(dynamicObject);
+            Destroy(dynamicObject);
+            Debug.Log("Destroyed Object ");
         }
-
-        public void AddPos(Vector2Int pos)
+        else
         {
-            positions.Add(pos);
+            Debug.LogWarning("No dynamic object ");
+            Destroy(dynamicObject);
         }
-
-        public void RemovePos(Vector2Int pos)
-        {
-            positions.Remove(pos);
-        }
-
-        public HashSet<Vector2Int> GetPositions()
-        {
-            if (positions.Count <= 0) ResetPositions();
-            return positions;
-        }
-
-
-        public void ChangePos(Vector2Int pos, Vector2Int newPos)
-        {
-            if (positions.Contains(pos))
-            {
-                positions.Remove(pos);
-                positions.Add(newPos);
-            }
-
-        }
-    */
+    }
 }
