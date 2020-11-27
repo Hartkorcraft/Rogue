@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : DynamicObject
 {
-    private Grid grid;
     private PathFinding pathfinding;
-    private GameManager gameManager;
-    private Movement2D movement2D;
     SelectionManager selectionManager;
 
     cakeslice.Outline outline;
@@ -20,14 +17,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] protected float speed = 40f;
     [SerializeField] private bool targeting = false;
 
-    void Awake()
+    protected override void Awake()
     {
-
-        grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        base.Awake();
         pathfinding = grid.GetComponent<PathFinding>();
-        movement2D = gameObject.AddComponent<Movement2D>();
-        //movement2D = new Movement2D(gameManager);
 
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         if (GetComponent<cakeslice.Outline>() == null)
@@ -37,12 +30,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         transform.position = new Vector3(grid.GetPosTransform(transform).x + 0.5f , grid.GetPosTransform(transform).y + 0.5f , transform.position.z) ;
         movePoints = totalMovePoints;
-        gameManager.AddDynamicObject(gameObject);
-        grid.OccupyCell(grid.GetCellByPos(transform.position), gameObject);
     }
 
     // Update is called once per frame  
@@ -217,6 +209,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Attacked!");
             Debug.Log(grid.GetCellByPos(pos).GetOccupiyingObject());
+            Debug.Log(grid.GetCellByPos(pos).gridPos);
+
             if (grid.GetCellByPos(pos).GetOccupiyingObject() != null && grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>() != null)
             {
                 Debug.Log("Hit!");

@@ -64,16 +64,19 @@ public class SelectionManager : MonoBehaviour
 
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         GameObject thing = null;
-        
+
         if(grid.GridCellsRangeCheck(worldPosition))
         thing = grid.GetCellByPos(worldPosition).GetOccupiyingObject();
-        
-        Renderer _selectionRenderer = null;
 
+        bool selectable = false;
+        if (thing != null) { selectable = thing.GetComponent<DynamicObject>().selectable; }
+
+
+        Renderer _selectionRenderer = null;
 
         //HighLighting
         {
-            if (thing != null)
+            if (thing != null && selectable)
             {
                 _selectionRenderer = thing.GetComponent<Renderer>();
                 if (_selectionRenderer != null)

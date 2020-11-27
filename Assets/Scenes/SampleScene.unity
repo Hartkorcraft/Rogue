@@ -272,13 +272,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22f62e0c6f4eb14da7ded08a2d7e4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalMovePoints: 1
-  movePoints: 1
-  speed: 40
+  selectable: 1
   healthSystem:
     totalHealthPoints: 1
     healthPoints: 1
     deathParticle: {fileID: 0}
+  totalMovePoints: 1
+  movePoints: 1
+  speed: 40
   playerPos: {fileID: 1372705519}
   canMove: 1
 --- !u!212 &138565621
@@ -710,6 +711,12 @@ PrefabInstance:
       propertyPath: healthSystem.healthPoints
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.deathParticle
+      value: 
+      objectReference: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
+        type: 3}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_Name
@@ -719,6 +726,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8212c50b25f787440ba61c883e69d0c3, type: 3}
@@ -804,6 +816,12 @@ PrefabInstance:
       propertyPath: healthSystem.totalHealthPoints
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.deathParticle
+      value: 
+      objectReference: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
+        type: 3}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_Name
@@ -813,6 +831,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8212c50b25f787440ba61c883e69d0c3, type: 3}
@@ -1163,6 +1186,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66278ba9918bf0748a0ed859b7f0204a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectable: 1
+  healthSystem:
+    totalHealthPoints: 1
+    healthPoints: 1
+    deathParticle: {fileID: 0}
   canMove: 1
   totalMovePoints: 0
   movePoints: 4
@@ -1312,7 +1340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1848512715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,6 +1366,8 @@ MonoBehaviour:
       deathParticle: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
         type: 3}
     stateAfterDestruction: 5
+  testObject: {fileID: 5695004915438811903, guid: b0a6fd56784139c4991d1d89f3fcac0e,
+    type: 3}
 --- !u!4 &1848512716
 Transform:
   m_ObjectHideFlags: 0
@@ -1836,6 +1866,12 @@ PrefabInstance:
       propertyPath: healthSystem.healthPoints
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
+        type: 3}
+      propertyPath: healthSystem.deathParticle
+      value: 
+      objectReference: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
+        type: 3}
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_Name

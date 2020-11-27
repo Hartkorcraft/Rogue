@@ -9,6 +9,8 @@ public class Testing : MonoBehaviour
 
     [SerializeField] private GridCellDestructable newCell;
 
+    public GameObject testObject; 
+
     private void Awake()
     {
         gameObject.GetComponent<GameManager>();
@@ -27,7 +29,9 @@ public class Testing : MonoBehaviour
         newCell.grid = grid;
         if(newCell != null) grid.SetTile(newCell);
 
-
+       
+        GameObject _testObject = Instantiate(testObject, new Vector3(6, 6), new Quaternion(0,0,0,0));
+        _testObject.GetComponent<DynamicObject>().selectable = false;
     }
 
 

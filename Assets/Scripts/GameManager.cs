@@ -89,26 +89,53 @@ public class GameManager : MonoBehaviour
     public void AddITurn(ITurn interfaceComponent,GameObject gameObject)
     {
         turnObjects.Add(interfaceComponent);
-        dynamicObjects.Add(gameObject);
+        if(!dynamicObjects.Contains(gameObject)) dynamicObjects.Add(gameObject);
     }
+
     public void AddDynamicObject(GameObject gameObject)
     {
+        if(!dynamicObjects.Contains(gameObject))
         dynamicObjects.Add(gameObject);
     }
+
     public bool CheckPosition(Vector2Int pos)
     {
         if (positions.Contains(pos)) return true;
         else return false;
     }
 
-    public void KillAllNpcs()
+    public void DestroyAllDynamicObjects()
     {
         for (int i = dynamicObjects.Count - 1; i > 0; i--)
         {
             Destroy(dynamicObjects[i]);
             dynamicObjects.RemoveAt(i);
         }
-        Debug.Log("killed all npcs");
+        Debug.Log("killed all dynamicObjects");
+    }
+
+    public void KillAllDynamicObjects()
+    {
+        for (int i = dynamicObjects.Count - 1; i > 0; i--)
+        {
+            dynamicObjects[i].GetComponent<DynamicObject>().Kill();
+            dynamicObjects.RemoveAt(i);
+        }
+        Debug.Log("killed all dynamicObjects");
+    }
+    public void KillAllNpcs()
+    {
+        for (int i = dynamicObjects.Count - 1; i > 0; i--)
+        {
+            Npc npc = dynamicObjects[i].GetComponent<Npc>();
+            if(npc != null)
+            {
+                npc.Kill();
+                dynamicObjects.RemoveAt(i);
+            }
+
+        }
+        Debug.Log("killed all dynamicObjects");
     }
 
     public void Kill(GameObject dynamicObject)

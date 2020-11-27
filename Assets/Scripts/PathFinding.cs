@@ -67,9 +67,13 @@ public class PathFinding : MonoBehaviour
                 }
                 else
                 {
+                    //Put something here to block pathfinding
                     bool blockPathfinding = false;
 
-                    //Put Here to block pathfinding
+
+                    blockPathfinding = neigbour.CheckCellObject();
+
+
                     switch (neigbour.cellstate)
                     {
                         case Grid.CellState.wall:
@@ -78,7 +82,6 @@ public class PathFinding : MonoBehaviour
 
 
                         default:
-                            blockPathfinding = false;
                             break;
                     }
                     if (blockPathfinding) continue;

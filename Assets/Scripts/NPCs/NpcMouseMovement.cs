@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class NpcMouseMovement : Npc
 {
-    SelectionManager selectionManager;
-    cakeslice.Outline outline;
+    protected SelectionManager selectionManager;
+    private cakeslice.Outline outline;
     public bool selected 
     {
         get 
@@ -30,7 +30,10 @@ public class NpcMouseMovement : Npc
 
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
     }
-
+    protected override void Start()
+    {
+        base.Start();
+    }
     public override bool Turn()
     {
         movePoints = totalMovePoints;
@@ -64,7 +67,7 @@ public class NpcMouseMovement : Npc
             List<GridCell> path = new List<GridCell>();
 
             //if (movePoints > 0) 
-            path = pathfinding.FindPath(transform.position, pos);
+            path = pathFinding.FindPath(transform.position, pos);
 
             gameManager.DrawPath(path, movePoints);
 

@@ -7,15 +7,6 @@ public class DungeonGenerator : MonoBehaviour
 {
 
     private Grid grid;
-    //public PathFinding pathFinding;
-
-/*
-    //public int roomNumber = 5;
-    public Vector2Int minRoomSize;
-    public Vector2Int maxRoomSize;
-
-    public int numberOfDivisions = 6;
-*/
 
     private void Awake()
     {
@@ -71,9 +62,6 @@ public class DungeonGenerator : MonoBehaviour
                 grid.gridCells[x][y].cellstate = Grid.CellState.floor;
             }
         }
-
-
-
 
         //Setting Tiles
 

@@ -472,6 +472,7 @@ public class GridCell
 
     public GameObject GetOccupiyingObject()
     {
+        Debug.Log(occupyingObject);
         return occupyingObject;
     }
 
