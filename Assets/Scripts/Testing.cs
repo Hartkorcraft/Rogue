@@ -7,9 +7,11 @@ public class Testing : MonoBehaviour
     GameManager gameManager;
     Grid grid;
 
-    [SerializeField] private GridCellDestructable newCell;
+    [SerializeField] private GridCellDestructable newCell = null;
 
-    public GameObject testObject; 
+    public GameObject testObject;
+
+    public GameObject pushingObject;
 
     private void Awake()
     {
@@ -34,5 +36,11 @@ public class Testing : MonoBehaviour
         _testObject.GetComponent<DynamicObject>().selectable = false;
     }
 
-
+void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            pushingObject.GetComponent<DynamicObject>().Push(Grid.Direction.up, 3);
+        }
+    }
 }

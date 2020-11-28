@@ -167,7 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ad5b2e1e667d2468ee3a049aecafe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveWithMouse: 0
 --- !u!114 &69399581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -730,7 +729,7 @@ PrefabInstance:
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8212c50b25f787440ba61c883e69d0c3, type: 3}
@@ -835,7 +834,7 @@ PrefabInstance:
     - target: {fileID: 5681769248937050605, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8212c50b25f787440ba61c883e69d0c3, type: 3}
@@ -1306,6 +1305,7 @@ MonoBehaviour:
   pathSprite: {fileID: 21300000, guid: d4a2747652554e24d86ff91f5ac139d5, type: 3}
   pathSpriteRed: {fileID: 21300000, guid: 7d187c313b1172f47b2c4e4b5d9dcf0c, type: 3}
   ruinSprite: {fileID: 21300000, guid: 931441789bae5404f90e0830576480e8, type: 3}
+  boundrySprite: {fileID: 21300000, guid: d5878061a3b14d74fac53c7571507fc7, type: 3}
   gridSize: {x: 15, y: 15}
   sectors: []
   rooms: []
@@ -1340,7 +1340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1848512715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1368,6 +1368,7 @@ MonoBehaviour:
     stateAfterDestruction: 5
   testObject: {fileID: 5695004915438811903, guid: b0a6fd56784139c4991d1d89f3fcac0e,
     type: 3}
+  pushingObject: {fileID: 0}
 --- !u!4 &1848512716
 Transform:
   m_ObjectHideFlags: 0
@@ -1652,6 +1653,7 @@ MonoBehaviour:
   currentSelection: {fileID: 0}
   pointer: {fileID: 28908875344831425, guid: 83bdb8b021930d945bded7b6907058f9, type: 3}
   canSelect: 1
+  deselectAfterFullMove: 1
 --- !u!4 &1983386186
 Transform:
   m_ObjectHideFlags: 0

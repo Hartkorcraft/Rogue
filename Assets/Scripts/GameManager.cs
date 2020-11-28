@@ -8,12 +8,11 @@ public class GameManager : MonoBehaviour
     private int turnNum = 0;
     private List<ITurn> turnObjects = new List<ITurn>();
     private Grid grid;
-    private List<GameObject> dynamicObjects = new List<GameObject>();
+    [SerializeField] private HashSet<GameObject> dynamicObjects = new HashSet<GameObject>();
     private HashSet<Vector2Int> positions = new HashSet<Vector2Int>();
     private GameObject playerObject;
     private SelectionManager selectionManager;
 
-    [SerializeField] bool moveWithMouse = false;
 
     private bool movingObjects = false;
     public bool MovingObjects { get => movingObjects;  set => movingObjects = value;}
@@ -60,9 +59,9 @@ public class GameManager : MonoBehaviour
     {
         grid.ResetOccupiedCells();
 
-        for (int i = 0; i < dynamicObjects.Count; i++)
-        {
-            grid.OccupyCell(grid.GetCellByPos(dynamicObjects[i].transform.position), dynamicObjects[i]);
+        foreach(GameObject dynamicObject in dynamicObjects)
+        { 
+            grid.OccupyCell(grid.GetCellByPos(dynamicObject.transform.position), dynamicObject);
         }
     }
     /*
@@ -89,12 +88,11 @@ public class GameManager : MonoBehaviour
     public void AddITurn(ITurn interfaceComponent,GameObject gameObject)
     {
         turnObjects.Add(interfaceComponent);
-        if(!dynamicObjects.Contains(gameObject)) dynamicObjects.Add(gameObject);
+        dynamicObjects.Add(gameObject);
     }
 
     public void AddDynamicObject(GameObject gameObject)
     {
-        if(!dynamicObjects.Contains(gameObject))
         dynamicObjects.Add(gameObject);
     }
 
@@ -106,32 +104,32 @@ public class GameManager : MonoBehaviour
 
     public void DestroyAllDynamicObjects()
     {
-        for (int i = dynamicObjects.Count - 1; i > 0; i--)
-        {
-            Destroy(dynamicObjects[i]);
-            dynamicObjects.RemoveAt(i);
+        foreach(GameObject dynamicObject in dynamicObjects)
+        { 
+            Destroy(dynamicObject);
+            dynamicObjects.Remove(dynamicObject);
         }
         Debug.Log("killed all dynamicObjects");
     }
 
     public void KillAllDynamicObjects()
     {
-        for (int i = dynamicObjects.Count - 1; i > 0; i--)
+        foreach (GameObject dynamicObject in dynamicObjects)
         {
-            dynamicObjects[i].GetComponent<DynamicObject>().Kill();
-            dynamicObjects.RemoveAt(i);
+            dynamicObject.GetComponent<DynamicObject>().Kill();
+            dynamicObjects.Remove(dynamicObject);
         }
         Debug.Log("killed all dynamicObjects");
     }
     public void KillAllNpcs()
     {
-        for (int i = dynamicObjects.Count - 1; i > 0; i--)
+        foreach (GameObject dynamicObject in dynamicObjects)
         {
-            Npc npc = dynamicObjects[i].GetComponent<Npc>();
+            Npc npc = dynamicObject.GetComponent<Npc>();
             if(npc != null)
             {
                 npc.Kill();
-                dynamicObjects.RemoveAt(i);
+                dynamicObjects.Remove(dynamicObject);
             }
 
         }

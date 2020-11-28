@@ -67,24 +67,7 @@ public class PathFinding : MonoBehaviour
                 }
                 else
                 {
-                    //Put something here to block pathfinding
-                    bool blockPathfinding = false;
-
-
-                    blockPathfinding = neigbour.CheckCellObject();
-
-
-                    switch (neigbour.cellstate)
-                    {
-                        case Grid.CellState.wall:
-                            blockPathfinding = true;
-                            break;
-
-
-                        default:
-                            break;
-                    }
-                    if (blockPathfinding) continue;
+                    if (grid.CellStateBlocking(neigbour)) continue;
                 }
 
                 int newCostToNeighbour = currentCell.gCost + GetDistance(currentCell, neigbour);

@@ -7,7 +7,7 @@ public class SelectionManager : MonoBehaviour
     Grid grid;
     GameManager gameManager;
 
-    [SerializeField] private Material highLightMaterial;
+    [SerializeField] private Material highLightMaterial = null;
 
     [SerializeField] private Transform hightlight;
     [SerializeField] private HashSet<Transform> selection = new HashSet<Transform>();
@@ -17,8 +17,12 @@ public class SelectionManager : MonoBehaviour
 
     [SerializeField] private GameObject pointer;
 
+
     [SerializeField] private bool canSelect = true;
     public bool CanSelect { get { return canSelect; } set { canSelect = value; } }
+
+    [SerializeField] private bool deselectAfterFullMove = true;
+    public bool DeselectAfterFullMove { get { return deselectAfterFullMove; } set { deselectAfterFullMove = value; } }
 
 
     public Transform GetCurSelection()

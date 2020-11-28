@@ -24,7 +24,7 @@ public class Movement2D : MonoBehaviour
         Vector2Int _pos = UtilsHart.ToInt2(transform.position);
 
 
-        if (grid.GetCellState(pos) != Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(pos)) == false)
+        if (grid.CellStateBlocking(grid.GetCellByPos(pos)) == false && grid.IsCellOccupied(grid.GetCellByPos(pos)) == false)
         {
             transform.position = new Vector2(pos.x+0.5f,pos.y+0.5f);
             gameManager.ResetOccupyingGameobjects();
@@ -34,18 +34,26 @@ public class Movement2D : MonoBehaviour
         return false;
     }
 
-    //MoveTo with Condition and speed
+    //MoveTo with Condition, movepoints and speed
     public bool MoveTo(List<GridCell> path, GameObject movingObject, int movePoints, float speed, Grid grid)
     {
 
         for (int i = 0; i < path.Count; i++)
         {
 
-            if (grid.GetCellState(path[i].gridPos) == Grid.CellState.wall && grid.IsCellOccupied(grid.GetCellByPos(path[i].gridPos)))
+            if (grid.CellStateBlocking(path[i]) == true && grid.IsCellOccupied(path[i]))
                 return false;
         }
 
-        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform,movePoints,speed));
+        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform,movePoints,speed, grid));
+        gameManager.ResetOccupyingGameobjects();
+
+        return false;
+    }
+
+    public bool MoveTo(List<GridCell> path, GameObject movingObject, float speed, Grid grid)
+    {
+        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform, speed, grid));
         gameManager.ResetOccupyingGameobjects();
 
         return false;
@@ -54,7 +62,8 @@ public class Movement2D : MonoBehaviour
     bool crTransitionRunning = false;
     public bool CrTransitionRunning { get { return crTransitionRunning; } }
 
-    public IEnumerator Transition(List<GridCell> path, Transform transform, int movePoints, float speed)
+    //Transition with movePoints
+    public IEnumerator Transition(List<GridCell> path, Transform transform, int movePoints, float speed, Grid grid)
     {
         gameManager.MovingObjects = true;
         crTransitionRunning = true;
@@ -90,14 +99,34 @@ public class Movement2D : MonoBehaviour
 
     }
 
-
-    public bool MoveBy(Vector2Int dir, Transform transform)
+    //Transition with movePoints
+    public IEnumerator Transition(List<GridCell> path, Transform transform, float speed, Grid grid)
     {
+        gameManager.MovingObjects = true;
+        crTransitionRunning = true;
 
-        Vector2Int newPos = new Vector2Int(UtilsHart.ToInt2(transform.position).x + dir.x, UtilsHart.ToInt2(transform.position).y + dir.y);
-        transform.position = (Vector2)newPos;
+        for (int i = 0; i < path.Count; i++)
+        {
+            if (path[i] == null || grid.CellStateBlocking(path[i]) == true || grid.IsCellOccupied(path[i])) break;
+
+            Vector3 target = new Vector3(path[i].gridPos.x + 0.5f, path[i].gridPos.y + 0.5f);
+
+
+            while (Vector3.Distance(transform.position, target) > 0.001f)
+            {
+                transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
+
+                yield return null;
+            }
+
+        }
+
+        Debug.Log("CrEnded");
+        crTransitionRunning = false;
+        gameManager.MovingObjects = false;
         gameManager.ResetOccupyingGameobjects();
-        return true;
+        yield return null;
+
     }
 
     //MoveBy with Condition

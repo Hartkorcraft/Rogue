@@ -100,7 +100,7 @@ public class NpcMouseMovement : Npc
 
                         if (movePoints <= 0)
                         {
-                            selectionManager.RemoveSelection(this.transform);
+                            if(selectionManager.DeselectAfterFullMove) selectionManager.RemoveSelection(this.transform);
                             grid.ClearPath();
                         }
 
@@ -109,7 +109,7 @@ public class NpcMouseMovement : Npc
                     else
                     {
                         Debug.Log("No path");
-                        movePoints = 0;
+                        //movePoints = 0;
                         break;
                     }
                 }

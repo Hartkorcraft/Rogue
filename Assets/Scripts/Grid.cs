@@ -27,7 +27,8 @@ public class Grid : MonoBehaviour
         darkness,
         debug,
         noCell,
-        ruins
+        ruins,
+        boundry
     };
 
     public Tilemap tilemap;
@@ -66,6 +67,9 @@ public class Grid : MonoBehaviour
 
     public Sprite ruinSprite;
     private Tile ruinTile;
+
+    public Sprite boundrySprite;
+    private Tile boundryTile;
 
     [SerializeField]
     private Vector2Int gridSize = new Vector2Int(20, 20);
@@ -111,6 +115,9 @@ public class Grid : MonoBehaviour
         ruinTile = ScriptableObject.CreateInstance<Tile>();
         ruinTile.sprite = ruinSprite;
 
+        boundryTile = ScriptableObject.CreateInstance<Tile>();
+        boundryTile.sprite = boundrySprite;
+
     }
 
     private void TileSwitch(Vector2Int pos)
@@ -150,6 +157,9 @@ public class Grid : MonoBehaviour
                 tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), pathTile);
                 break;
 
+            case CellState.boundry:
+                tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), boundryTile);
+                break;
 
             case CellState.debug:
                 tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), debugTile);
@@ -159,6 +169,31 @@ public class Grid : MonoBehaviour
                 Debug.LogWarning("No cell state?");
                 break;
         }
+    }
+
+    //Put here to block movement/pathfinding etc
+    public bool CellStateBlocking(GridCell cell)
+    {
+        //Put something here to block pathfinding
+        bool block = false;
+
+
+        block = IsCellOccupied(cell);
+
+
+        switch (cell.cellstate)
+        {
+            case Grid.CellState.wall:
+                block = true;
+                break;
+            case Grid.CellState.boundry:
+                block = true;
+                break;
+
+            default:
+                break;
+        }
+        return block;
     }
 
     private void Update()
@@ -199,7 +234,6 @@ public class Grid : MonoBehaviour
         }
     }
    
-
 
     public void SetTiles()
     {
@@ -472,7 +506,7 @@ public class GridCell
 
     public GameObject GetOccupiyingObject()
     {
-        Debug.Log(occupyingObject);
+        //Debug.Log(occupyingObject);
         return occupyingObject;
     }
 

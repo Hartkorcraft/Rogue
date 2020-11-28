@@ -71,11 +71,6 @@ public class Npc : DynamicObject, ITurn, IDamagable
         Debug.Log("Killed");
     }
 
-    public Vector2Int GetGridPos()
-    {
-        gridPos = new Vector2Int(grid.GetCellPos(transform.position).x, grid.GetCellPos(transform.position).y);
-        return gridPos;
-    }
 
     
 

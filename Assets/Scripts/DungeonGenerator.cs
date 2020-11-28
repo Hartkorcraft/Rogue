@@ -37,8 +37,8 @@ public class DungeonGenerator : MonoBehaviour
         //Initializing Dungeon
         {
             grid.gridCells = new GridCell[grid.GetGridSize().x][];
-            Grid.Sector initialSector = new Grid.Sector(new Vector2Int(0, 0), grid.GetGridSize());
-            grid.sectors.Add(initialSector);
+            //Grid.Sector initialSector = new Grid.Sector(new Vector2Int(0, 0), grid.GetGridSize());
+            //grid.sectors.Add(initialSector);
             for (int x = 0; x < grid.GetGridSize().x; x++)
             {
                 grid.gridCells[x] = new GridCell[grid.GetGridSize().y];
@@ -47,10 +47,11 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     grid.gridCells[x][y] = new GridCell(new Vector2Int(x, y), Grid.CellState.available, grid);
 
-                    initialSector.sectorCells.Add(grid.gridCells[x][y]);
+                    //initialSector.sectorCells.Add(grid.gridCells[x][y]);
                 }
 
             }
+
             Debug.Log("Dungeon was initialized");
         }
 
@@ -60,8 +61,17 @@ public class DungeonGenerator : MonoBehaviour
             for (int y = 0; y < grid.GetGridSize().y; y++)
             {
                 grid.gridCells[x][y].cellstate = Grid.CellState.floor;
+
+                grid.gridCells[0][y].cellstate = Grid.CellState.boundry;
+                grid.gridCells[grid.GetGridSize().x-1][y].cellstate = Grid.CellState.boundry;
+
             }
+            grid.gridCells[x][0].cellstate = Grid.CellState.boundry;
+            grid.gridCells[x][grid.GetGridSize().y-1].cellstate = Grid.CellState.boundry;
         }
+
+
+
 
         //Setting Tiles
 

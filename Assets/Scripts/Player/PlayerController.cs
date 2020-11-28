@@ -209,9 +209,11 @@ public class PlayerController : DynamicObject
         {
             Debug.Log("Attacked!");
             Debug.Log(grid.GetCellByPos(pos).GetOccupiyingObject());
+
+
             Debug.Log(grid.GetCellByPos(pos).gridPos);
 
-            if (grid.GetCellByPos(pos).GetOccupiyingObject() != null && grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>() != null)
+            if (grid.GetCellByPos(pos).GetOccupiyingObject() != null && grid.GetCellByPos(pos).GetOccupiyingObject() != this.gameObject && grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>() != null)
             {
                 Debug.Log("Hit!");
                 IDamagable idamagableObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>();
