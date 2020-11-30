@@ -217,6 +217,8 @@ public class PlayerController : DynamicObject
             {
                 Debug.Log("Hit!");
                 IDamagable idamagableObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>();
+                DynamicObject dynamicObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<DynamicObject>();
+                if (dynamicObject != null) dynamicObject.Push(UtilsHart.GetDir(gridpos, dynamicObject.gridpos), 1);
                 idamagableObject.Damage(1);
             }
 

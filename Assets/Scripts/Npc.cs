@@ -12,7 +12,7 @@ public class Npc : DynamicObject, ITurn, IDamagable
     protected PathFinding pathFinding;
 
 
-    [SerializeField] protected Transform playerPos;
+    [SerializeField] protected Transform target;
     [SerializeField] protected bool canMove = true;
 
     protected override void Awake()
@@ -34,44 +34,69 @@ public class Npc : DynamicObject, ITurn, IDamagable
     {
         gameManager.ResetOccupyingGameobjects();
         movePoints = totalMovePoints;
-        List<GridCell> path = new List<GridCell>();
-        if (movePoints>0)  path = pathFinding.FindPath(transform.position, playerPos.position);
 
-        int pathCellNum = 0;
-        while (movePoints > 0)
+        if (target != null)
         {
-            if (path != null && path.Count > 0 && pathCellNum < path.Count && canMove)
+            List<GridCell> path = new List<GridCell>();
+            if (movePoints > 0) path = pathFinding.FindPath(transform.position, target.position);
+            int pathCellNum = 0;
+            while (movePoints > 0)
             {
-                movePoints--;
-                movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
-                //movement2D.MoveTo(path, this, movePoints, speed, grid);
+                if (path != null && path.Count > 0 && pathCellNum < path.Count && canMove)
+                {
+                    movePoints--;
+                    movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
+                    //movement2D.MoveTo(path, this, movePoints, speed, grid);
 
-                if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(playerPos.position.x, playerPos.position.y))) break;
-                pathCellNum++;
-            }
-            else
-            {
-                movePoints = 0;
-                break;
+                    if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(target.position.x, target.position.y))) break;
+                    pathCellNum++;
+                }
+                else
+                {
+                    movePoints = 0;
+                    break;
+                }
             }
         }
+
         return true;
     }
 
+
+
+    /* 
     public override void  Damage(float damage)
     {
+        if (healthSystem.Destructable == false)
+        {
+            Debug.Log("Indestructable");
+            return;
+        }
+
         HealthPoints =  HealthPoints - damage;
         if (HealthPoints <= 0) Kill(); 
     }    
 
     public override void Kill()
     {
-        gameManager.Kill(this.gameObject);
+        if (healthSystem.Destructable == false)
+        {
+            Debug.Log("Indestructable");
+            return;
+        }
+
+        gameManager.DestroyDynamicObject(this.gameObject);
         if(healthSystem.DeathParticle != null) { Instantiate(healthSystem.DeathParticle, transform.position, healthSystem.DeathParticle.transform.rotation); }
         Debug.Log("Killed");
     }
+    public override void ForceKill()
+    {
+        gameManager.DestroyDynamicObject(this.gameObject);
+        if (healthSystem.DeathParticle != null) { Instantiate(healthSystem.DeathParticle, transform.position, healthSystem.DeathParticle.transform.rotation); }
+        Debug.Log("Killed");
+    }
+    */
 
 
-    
 
 }

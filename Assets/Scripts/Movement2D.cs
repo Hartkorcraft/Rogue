@@ -59,7 +59,7 @@ public class Movement2D : MonoBehaviour
         return false;
     }
 
-    bool crTransitionRunning = false;
+    private bool crTransitionRunning = false;
     public bool CrTransitionRunning { get { return crTransitionRunning; } }
 
     //Transition with movePoints
@@ -82,14 +82,24 @@ public class Movement2D : MonoBehaviour
         for (int i = 0; i < moves; i++)
         {
             Vector3 target = new Vector3(path[i].gridPos.x + 0.5f, path[i].gridPos.y + 0.5f);
+
+            if (gameManager.MovingObjects == false)
+            {
+                Vector2Int _pos = UtilsHart.ToInt2(transform.position);
+                transform.position = new Vector2(_pos.x + 0.5f, _pos.y + 0.5f);
+                gameManager.ResetOccupyingGameobjects();
+                break;
+            }
+
             while (Vector3.Distance(transform.position, target) > 0.001f)
             {
                 transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
 
                 yield return null;
             }
-
         }
+
+
 
         Debug.Log("CrEnded");
         crTransitionRunning = false;
@@ -108,9 +118,15 @@ public class Movement2D : MonoBehaviour
         for (int i = 0; i < path.Count; i++)
         {
             if (path[i] == null || grid.CellStateBlocking(path[i]) == true || grid.IsCellOccupied(path[i])) break;
-
             Vector3 target = new Vector3(path[i].gridPos.x + 0.5f, path[i].gridPos.y + 0.5f);
 
+            if (gameManager.MovingObjects == false)
+            {
+                Vector2Int _pos = UtilsHart.ToInt2(transform.position);
+                transform.position = new Vector2(_pos.x + 0.5f, _pos.y + 0.5f);
+                gameManager.ResetOccupyingGameobjects();
+                break;
+            }
 
             while (Vector3.Distance(transform.position, target) > 0.001f)
             {
@@ -127,6 +143,24 @@ public class Movement2D : MonoBehaviour
         gameManager.ResetOccupyingGameobjects();
         yield return null;
 
+    }
+
+    public void StopMovement(Transform transform)
+    {
+        if (crTransitionRunning)
+        {
+            gameManager.MovingObjects = false;
+        }
+        Debug.Log("Stopped movement");
+    }
+
+    public IEnumerator WaitToMove(List<GridCell> path, GameObject movingObject, float speed, Grid grid)
+    {
+        gameManager.MovingObjects = false;
+        yield return new WaitForSeconds(0.05f);
+
+        if (crTransitionRunning == false) MoveTo(path, movingObject, speed, grid);
+        else StartCoroutine(WaitToMove(path, movingObject, speed, grid));
     }
 
     //MoveBy with Condition

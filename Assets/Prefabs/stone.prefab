@@ -95,8 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce019ce3c51786449cc3c2354d1ff25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectable: 0
   healthSystem:
     totalHealthPoints: 1
-    healthPoints: 1
+    healthPoints: 5
+    destructable: 1
     deathParticle: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
       type: 3}
+  weight: 0

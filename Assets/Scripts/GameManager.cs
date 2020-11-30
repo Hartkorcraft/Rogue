@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     private SelectionManager selectionManager;
 
 
-    private bool movingObjects = false;
+    [SerializeField] private bool movingObjects = false;
     public bool MovingObjects { get => movingObjects;  set => movingObjects = value;}
 
 
@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (GameObject dynamicObject in dynamicObjects)
         {
-            dynamicObject.GetComponent<DynamicObject>().Kill();
+            dynamicObject.GetComponent<DynamicObject>().ForceKill();
             dynamicObjects.Remove(dynamicObject);
         }
         Debug.Log("killed all dynamicObjects");
@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
             Npc npc = dynamicObject.GetComponent<Npc>();
             if(npc != null)
             {
-                npc.Kill();
+                npc.ForceKill();
                 dynamicObjects.Remove(dynamicObject);
             }
 
@@ -136,7 +136,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("killed all dynamicObjects");
     }
 
-    public void Kill(GameObject dynamicObject)
+    public void Kill(IDamagable damagable)
+    {
+        damagable.ForceKill();
+    }
+
+    public void DestroyDynamicObject(GameObject dynamicObject)
     {
         if (dynamicObjects.Contains(dynamicObject))
         {

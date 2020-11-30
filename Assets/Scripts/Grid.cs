@@ -557,6 +557,12 @@ public class GridCellDestructable : GridCell, IDamagable
 
     public void Damage(float damage)
     {
+        if (healthSystem.Destructable == false)
+        {
+            Debug.Log("Indestructable");
+            return;
+        }
+
         HealthPoints = HealthPoints - damage;
 
         if (HealthPoints <= 0) { Kill(); }
@@ -564,11 +570,24 @@ public class GridCellDestructable : GridCell, IDamagable
 
     public void Kill()
     {
+        if (healthSystem.Destructable == false)
+        {
+            Debug.Log("Indestructable");
+            return;
+        }
+
         GridCell cell = new GridCell(this.gridPos,stateAfterDestruction,this.grid);
      
         grid.SetTile(gridPos, stateAfterDestruction, cell);
         if (healthSystem.DeathParticle != null) { MonoBehaviour.Instantiate(healthSystem.DeathParticle, new Vector3(gridPos.x + 0.5f, gridPos.y + 0.5f, 0), healthSystem.DeathParticle.transform.rotation); }
         Debug.Log("Destroyed Tile");
     }
+    public void ForceKill()
+    {
+        GridCell cell = new GridCell(this.gridPos, stateAfterDestruction, this.grid);
 
+        grid.SetTile(gridPos, stateAfterDestruction, cell);
+        if (healthSystem.DeathParticle != null) { MonoBehaviour.Instantiate(healthSystem.DeathParticle, new Vector3(gridPos.x + 0.5f, gridPos.y + 0.5f, 0), healthSystem.DeathParticle.transform.rotation); }
+        Debug.Log("Destroyed Tile");
+    }
 }

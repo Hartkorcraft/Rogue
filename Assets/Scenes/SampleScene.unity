@@ -275,11 +275,13 @@ MonoBehaviour:
   healthSystem:
     totalHealthPoints: 1
     healthPoints: 1
+    destructable: 1
     deathParticle: {fileID: 0}
+  weight: 1
   totalMovePoints: 1
   movePoints: 1
   speed: 40
-  playerPos: {fileID: 1372705519}
+  target: {fileID: 0}
   canMove: 1
 --- !u!212 &138565621
 SpriteRenderer:
@@ -703,12 +705,12 @@ PrefabInstance:
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.totalHealthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.healthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
@@ -808,12 +810,12 @@ PrefabInstance:
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.healthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.totalHealthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
@@ -1189,7 +1191,9 @@ MonoBehaviour:
   healthSystem:
     totalHealthPoints: 1
     healthPoints: 1
+    destructable: 1
     deathParticle: {fileID: 0}
+  weight: 0
   canMove: 1
   totalMovePoints: 0
   movePoints: 4
@@ -1363,12 +1367,13 @@ MonoBehaviour:
     healthSystem:
       totalHealthPoints: 1
       healthPoints: 1
+      destructable: 1
       deathParticle: {fileID: 197121634031025446, guid: ec0b014f0e76c504f8a97b4271fff217,
         type: 3}
     stateAfterDestruction: 5
-  testObject: {fileID: 5695004915438811903, guid: b0a6fd56784139c4991d1d89f3fcac0e,
+  pushingObject: {fileID: 1372705517}
+  dynamicObject: {fileID: 7093544390420452929, guid: b0a6fd56784139c4991d1d89f3fcac0e,
     type: 3}
-  pushingObject: {fileID: 0}
 --- !u!4 &1848512716
 Transform:
   m_ObjectHideFlags: 0
@@ -1861,12 +1866,12 @@ PrefabInstance:
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.totalHealthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}
       propertyPath: healthSystem.healthPoints
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5681769248937050602, guid: 8212c50b25f787440ba61c883e69d0c3,
         type: 3}

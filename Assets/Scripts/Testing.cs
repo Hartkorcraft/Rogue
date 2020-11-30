@@ -9,9 +9,9 @@ public class Testing : MonoBehaviour
 
     [SerializeField] private GridCellDestructable newCell = null;
 
-    public GameObject testObject;
 
     public GameObject pushingObject;
+    public DynamicObject dynamicObject;
 
     private void Awake()
     {
@@ -27,19 +27,21 @@ public class Testing : MonoBehaviour
 
         Vector2Int pos = new Vector2Int(4, 4);
 
-        //GridCellDestructable newCell = new GridCellDestructable(pos, Grid.CellState.wall, grid, 4, 4, Grid.CellState.ruins);
         newCell.grid = grid;
         if(newCell != null) grid.SetTile(newCell);
 
-       
-        GameObject _testObject = Instantiate(testObject, new Vector3(6, 6), new Quaternion(0,0,0,0));
-        _testObject.GetComponent<DynamicObject>().selectable = false;
+
+        dynamicObject.selectable = false;
+        dynamicObject.HealthPoints = 5;
+        Instantiate(dynamicObject.gameObject, new Vector3(6, 6), new Quaternion(0,0,0,0));
     }
 
 void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            Debug.Log("Pushed");
+            Movement2D movement2d = pushingObject.GetComponent<DynamicObject>().GetComponent<Movement2D>();
             pushingObject.GetComponent<DynamicObject>().Push(Grid.Direction.up, 3);
         }
     }
