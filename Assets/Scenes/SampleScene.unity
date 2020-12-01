@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1ad5b2e1e667d2468ee3a049aecafe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movingObjects: 0
 --- !u!114 &69399581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1300,16 +1301,29 @@ MonoBehaviour:
   wallTiles: {fileID: 261661301}
   pathTiles: {fileID: 1904599632}
   floorSprite: {fileID: 21300000, guid: ecd921e66fc425641a7a3b003c260ccd, type: 3}
+  floorTile: {fileID: 0}
   floorPlankSprite: {fileID: 21300000, guid: b71769ea82aaba043b6100400aa51452, type: 3}
+  floorPlankTile: {fileID: 0}
   darknessSprite: {fileID: 21300000, guid: 3d09915ec09b0b94889249e5ccd5c94d, type: 3}
+  darknessTile: {fileID: 0}
   wallSprite: {fileID: 21300000, guid: a190392ef6879904091cfa8426057448, type: 3}
+  wallTile: {fileID: 0}
   wallBlockedSprite: {fileID: 21300000, guid: 04b31326d5ef7e3438f259f6ba6e8885, type: 3}
+  wallBlockedTile: {fileID: 0}
   entranceSprite: {fileID: 21300000, guid: 7a2c599479ccd8044bea6ff264555923, type: 3}
+  entranceTile: {fileID: 0}
   debugSprite: {fileID: 21300000, guid: 0ef9bdf3b51c1154996e37dfd621803a, type: 3}
+  debugTile: {fileID: 0}
   pathSprite: {fileID: 21300000, guid: d4a2747652554e24d86ff91f5ac139d5, type: 3}
+  pathTile: {fileID: 0}
   pathSpriteRed: {fileID: 21300000, guid: 7d187c313b1172f47b2c4e4b5d9dcf0c, type: 3}
+  pathTileRed: {fileID: 0}
+  pathSpriteBlue: {fileID: 21300000, guid: 54e7f2ad8bb61df4c8ece53f2684a57e, type: 3}
+  pathTileBlue: {fileID: 0}
   ruinSprite: {fileID: 21300000, guid: 931441789bae5404f90e0830576480e8, type: 3}
+  ruinTile: {fileID: 0}
   boundrySprite: {fileID: 21300000, guid: d5878061a3b14d74fac53c7571507fc7, type: 3}
+  boundryTile: {fileID: 0}
   gridSize: {x: 15, y: 15}
   sectors: []
   rooms: []
@@ -1463,7 +1477,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9e464c819a3034142840ad3e77746850, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

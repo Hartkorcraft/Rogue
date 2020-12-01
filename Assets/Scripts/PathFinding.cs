@@ -89,17 +89,85 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
-    public List<GridCell> FindCellsBetweenTwoPoints(Vector2 startPos, Vector2 endPos)
+    //IgnoresAllObstacles
+    public List<GridCell> FindPath(Vector2 startPos, Vector2 endPos, bool ignoreObstacles)
     {
+
+
+        //Check if Cells are on grid
+        if (grid.GridCellsRangeCheck(startPos) == false || grid.GridCellsRangeCheck(endPos) == false || startPos.Equals(endPos) == true) return null;
+
+
         GridCell startCell = grid.GetCellByPos(startPos);
         GridCell endCell = grid.GetCellByPos(endPos);
 
-        List<GridCell> path = new List<GridCell>();
+        List<GridCell> openSet = new List<GridCell>();
+        HashSet<GridCell> closedSet = new HashSet<GridCell>();
+        openSet.Add(startCell);
 
+        while (openSet.Count > 0)
+        {
+            GridCell currentCell = openSet[0];
+            for (int i = 0; i < openSet.Count; i++)
+            {
+                if (openSet[i].fCost < currentCell.fCost || openSet[i].fCost == currentCell.fCost && openSet[i].hCost < currentCell.hCost)
+                {
+                    currentCell = openSet[i];
+                }
+            }
 
-        return path;
+            openSet.Remove(currentCell);
+            closedSet.Add(currentCell);
+
+            if (currentCell == endCell)
+            {
+                List<GridCell> path = RetracePath(startCell, endCell);
+                return path;
+            }
+
+            foreach (GridCell neigbour in grid.GetNeigbours(currentCell))
+            {
+
+                if (closedSet.Contains(neigbour) && neigbour != endCell)
+                {
+                    continue;
+                }
+
+                int newCostToNeighbour = currentCell.gCost + GetDistance(currentCell, neigbour);
+                if (newCostToNeighbour < neigbour.gCost || !openSet.Contains(neigbour))
+                {
+                    neigbour.gCost = newCostToNeighbour;
+                    neigbour.hCost = GetDistance(neigbour, endCell);
+                    neigbour.parent = currentCell;
+
+                    if (openSet.Contains(neigbour) == false)
+                    {
+                        openSet.Add(neigbour);
+                    }
+                }
+            }
+
+        }
+        return null;
     }
 
+    public List<GridCell> ReturnPathWithNoBlockin(List<GridCell> path)
+    {
+        List<GridCell> newPath = new List<GridCell>();
+
+        if (path != null)
+            for (int i = 0; i < path.Count; i++)
+            {
+                newPath.Add(path[i]);
+                if (grid.CellStateBlocking(path[i]) == true && path[i].HasCellObject() == true)
+                {
+                    return newPath;
+                }
+
+            }
+
+        return newPath;
+    }
 
     private List<GridCell> RetracePath(GridCell startNode, GridCell endNode)
     {

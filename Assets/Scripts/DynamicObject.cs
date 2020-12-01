@@ -20,7 +20,7 @@ public class DynamicObject : MonoBehaviour, IDamagable
 
     protected virtual void Awake()
     {
-        movement2D = gameObject.AddComponent<Movement2D>();
+        if(gameObject.GetComponent<Movement2D>() == null) movement2D = gameObject.AddComponent<Movement2D>();
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
 
@@ -66,7 +66,7 @@ public class DynamicObject : MonoBehaviour, IDamagable
 
     public virtual void Push(Grid.Direction direction, int strength)
     {
-        
+        if (HealthPoints == 0) return;
 
         strength = strength - weight;
         if (strength <= 0) return;

@@ -76,10 +76,6 @@ public class GameManager : MonoBehaviour
         return grid.TurnMapEdition();
     }
 
-    public void DrawPath(List<GridCell> path, int distance)
-    {
-        grid.DrawPath(path, distance);
-    }
     public void ClearPath()
     {
         grid.ClearPath();

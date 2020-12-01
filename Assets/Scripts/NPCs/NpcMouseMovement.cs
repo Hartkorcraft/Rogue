@@ -69,7 +69,7 @@ public class NpcMouseMovement : Npc
             //if (movePoints > 0) 
             path = pathFinding.FindPath(transform.position, pos);
 
-            gameManager.DrawPath(path, movePoints);
+            grid.DrawPath(path, movePoints, grid.pathTile, grid.pathTileBlue);
 
             if (Input.GetMouseButtonDown(0) && movePoints > 0 && gameManager.MovingObjects == false && canMove)
             {

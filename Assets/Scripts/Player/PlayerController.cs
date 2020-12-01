@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : DynamicObject
 {
     private PathFinding pathfinding;
+    private Targeting targeting = new Targeting();
     SelectionManager selectionManager;
 
     cakeslice.Outline outline;
@@ -15,7 +16,6 @@ public class PlayerController : DynamicObject
     [SerializeField] private bool moveWithMouse = false;
     [SerializeField] private bool endTurnAfterMovePoint = false;
     [SerializeField] protected float speed = 40f;
-    [SerializeField] private bool targeting = false;
 
     protected override void Awake()
     {
@@ -44,7 +44,7 @@ public class PlayerController : DynamicObject
         else
         {
             outline.enabled = false;
-            targeting = false;
+            targeting.IsTargeting = false;
         }
         Turn();
 
@@ -68,18 +68,17 @@ public class PlayerController : DynamicObject
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            targeting = !targeting;
+            targeting.IsTargeting = !targeting.IsTargeting;
         }
 
-        if (targeting == false)
+        if (targeting.IsTargeting == false)
         {
-            gameManager.Targeting = false;
             Movement();
         }
         else if (selected)
         {
             gameManager.Targeting = true;
-            Targeting();
+            targeting.Target();
         }
 
 
@@ -116,8 +115,8 @@ public class PlayerController : DynamicObject
                 //if (movePoints > 0) 
                 path = pathfinding.FindPath(transform.position, pos);
 
-                if (totalMovePoints > 0) gameManager.DrawPath(path, movePoints);
-                else gameManager.DrawPath(path, 50);
+                if (totalMovePoints > 0) grid.DrawPath(path, movePoints, grid.pathTile,grid.pathTileBlue);
+                else grid.DrawPath(path, 50,grid.pathTile);
 
                 if (Input.GetMouseButtonDown(0) && (movePoints > 0 || totalMovePoints <= 0) && gameManager.MovingObjects == false && canMove)
                 {
@@ -195,43 +194,6 @@ public class PlayerController : DynamicObject
 
     }
 
-    public void Targeting()
-    {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        gameManager.ResetOccupyingGameobjects();
-        List<GridCell> path = new List<GridCell>();
-
-        path = pathfinding.FindPath(transform.position, pos);
-        gameManager.DrawPath(path, movePoints);
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("Attacked!");
-            Debug.Log(grid.GetCellByPos(pos).GetOccupiyingObject());
-
-
-            Debug.Log(grid.GetCellByPos(pos).gridPos);
-
-            if (grid.GetCellByPos(pos).GetOccupiyingObject() != null && grid.GetCellByPos(pos).GetOccupiyingObject() != this.gameObject && grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>() != null)
-            {
-                Debug.Log("Hit!");
-                IDamagable idamagableObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>();
-                DynamicObject dynamicObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<DynamicObject>();
-                if (dynamicObject != null) dynamicObject.Push(UtilsHart.GetDir(gridpos, dynamicObject.gridpos), 1);
-                idamagableObject.Damage(1);
-            }
-
-            if(grid.GetCellByPos(pos) is GridCellDestructable)
-            {
-                GridCellDestructable newCell = (GridCellDestructable)grid.GetCellByPos(pos);
-                newCell.Damage(1);
-            }
-
-
-        }
-
-    }
 
 
     public void EndTurn()

@@ -38,38 +38,41 @@ public class Grid : MonoBehaviour
     public Tilemap wallTiles;
     public Tilemap pathTiles;
 
-    public Sprite floorSprite;
-    private Tile floorTile;
+    [SerializeField] private Sprite floorSprite;
+    [HideInInspector] public Tile floorTile;
 
-    public Sprite floorPlankSprite;
-    private Tile floorPlankTile;
+    [SerializeField] private Sprite floorPlankSprite;
+    [HideInInspector] public Tile floorPlankTile;
 
-    public Sprite darknessSprite;
-    private Tile darknessTile;
+    [SerializeField] private Sprite darknessSprite;
+    [HideInInspector] public Tile darknessTile;
 
-    public Sprite wallSprite;
-    private Tile wallTile;
+    [SerializeField] private Sprite wallSprite;
+    [HideInInspector] public Tile wallTile;
 
-    public Sprite wallBlockedSprite; //Temporary sprite
-    private Tile wallBlockedTile;
+    [SerializeField] private Sprite wallBlockedSprite; //Temporary sprite
+    [HideInInspector] public Tile wallBlockedTile;
 
-    public Sprite entranceSprite;
-    private Tile entranceTile;
+    [SerializeField] private Sprite entranceSprite;
+    [HideInInspector] public Tile entranceTile;
 
-    public Sprite debugSprite;
-    private Tile debugTile;
+    [SerializeField] private Sprite debugSprite;
+    [HideInInspector] public Tile debugTile;
 
-    public Sprite pathSprite;
-    private Tile pathTile;
+    [SerializeField] private Sprite pathSprite;
+    [HideInInspector] public Tile pathTile;
 
-    public Sprite pathSpriteRed;
-    private Tile pathTileRed;
+    [SerializeField] private Sprite pathSpriteRed;
+    [HideInInspector] public Tile pathTileRed;
 
-    public Sprite ruinSprite;
-    private Tile ruinTile;
+    [SerializeField] private Sprite pathSpriteBlue;
+    [HideInInspector] public Tile pathTileBlue;
 
-    public Sprite boundrySprite;
-    private Tile boundryTile;
+    [SerializeField] private Sprite ruinSprite;
+    [HideInInspector] public Tile ruinTile;
+
+    [SerializeField] private Sprite boundrySprite;
+    [HideInInspector] public Tile boundryTile;
 
     [SerializeField]
     private Vector2Int gridSize = new Vector2Int(20, 20);
@@ -108,6 +111,9 @@ public class Grid : MonoBehaviour
 
         pathTileRed = ScriptableObject.CreateInstance<Tile>();
         pathTileRed.sprite = pathSpriteRed;
+
+        pathTileBlue = ScriptableObject.CreateInstance<Tile>();
+        pathTileBlue.sprite = pathSpriteBlue;
 
         debugTile = ScriptableObject.CreateInstance<Tile>();
         debugTile.sprite = debugSprite;
@@ -233,7 +239,61 @@ public class Grid : MonoBehaviour
             }
         }
     }
-   
+
+    public void DrawPath(List<GridCell> path, int distance, Tile tile1, Tile tile2)
+    {
+        pathTiles.ClearAllTiles();
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (distance > 0)
+                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile1);
+                else pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile2);
+                distance--;
+            }
+        }
+    }
+
+    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance)
+    {
+        if(onlyDistance == false)
+        {
+            DrawPath(path, distance);
+            return;
+        }
+
+        pathTiles.ClearAllTiles();
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (distance > 0)
+                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
+                distance--;
+            }
+        }
+    }
+
+    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance, Tile tile)
+    {
+        if (onlyDistance == false)
+        {
+            DrawPath(path, distance);
+            return;
+        }
+
+        pathTiles.ClearAllTiles();
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (distance > 0)
+                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile);
+                distance--;
+            }
+        }
+    }
 
     public void SetTiles()
     {
