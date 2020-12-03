@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : DynamicObject
 {
     private PathFinding pathfinding;
-    private Targeting targeting = new Targeting();
+    private Targeting targeting;
     SelectionManager selectionManager;
 
     cakeslice.Outline outline;
@@ -16,11 +16,15 @@ public class PlayerController : DynamicObject
     [SerializeField] private bool moveWithMouse = false;
     [SerializeField] private bool endTurnAfterMovePoint = false;
     [SerializeField] protected float speed = 40f;
+    [SerializeField] private int range = 5;
 
     protected override void Awake()
     {
+
         base.Awake();
+
         pathfinding = grid.GetComponent<PathFinding>();
+        targeting = gameObject.AddComponent<Targeting>();
 
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         if (GetComponent<cakeslice.Outline>() == null)
@@ -77,8 +81,8 @@ public class PlayerController : DynamicObject
         }
         else if (selected)
         {
-            gameManager.Targeting = true;
-            targeting.Target();
+           GridCell target = targeting.Target(range);
+            if(target != null) { Attack(target); }
         }
 
 
@@ -97,6 +101,47 @@ public class PlayerController : DynamicObject
 
 
         return true;
+    }
+
+    public void Attack(GridCell target)
+    {
+        if (grid.GetCellByPos(target.gridPos).GetOccupiyingObject() != null && target.GetOccupiyingObject() != this.gameObject && target.GetOccupiyingObject().GetComponent<IDamagable>() != null)
+        {
+            Debug.Log("Hit!");
+            IDamagable idamagableObject = target.GetOccupiyingObject().GetComponent<IDamagable>();
+            DynamicObject dynamicObject = target.GetOccupiyingObject().GetComponent<DynamicObject>();
+            idamagableObject.Damage(1);
+            if (dynamicObject != null) dynamicObject.Push(UtilsHart.GetDir(gridpos, dynamicObject.gridpos), 1);
+        }
+
+        if (grid.GetCellByPos(target.gridPos) is GridCellDestructable)
+        {
+            GridCellDestructable newCell = (GridCellDestructable)grid.GetCellByPos(target.gridPos);
+            newCell.Damage(1);
+        }
+    }
+    public void Attack(GridCell target, Grid.CellDepth cellDepth)
+    {
+        if(cellDepth == Grid.CellDepth.both)
+        {
+            Attack(target);
+            return;
+        }
+
+        if (cellDepth == Grid.CellDepth.cellObject && grid.GetCellByPos(target.gridPos).GetOccupiyingObject() != null && target.GetOccupiyingObject() != this.gameObject && target.GetOccupiyingObject().GetComponent<IDamagable>() != null)
+        {
+            Debug.Log("Hit!");
+            IDamagable idamagableObject = target.GetOccupiyingObject().GetComponent<IDamagable>();
+            DynamicObject dynamicObject = target.GetOccupiyingObject().GetComponent<DynamicObject>();
+            idamagableObject.Damage(1);
+            if (dynamicObject != null) dynamicObject.Push(UtilsHart.GetDir(gridpos, dynamicObject.gridpos), 1);
+        }
+
+        if (cellDepth == Grid.CellDepth.cell && grid.GetCellByPos(target.gridPos) is GridCellDestructable)
+        {
+            GridCellDestructable newCell = (GridCellDestructable)grid.GetCellByPos(target.gridPos);
+            newCell.Damage(1);
+        }
     }
 
     public void Movement()
@@ -193,8 +238,6 @@ public class PlayerController : DynamicObject
         }
 
     }
-
-
 
     public void EndTurn()
     {

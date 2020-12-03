@@ -8,7 +8,7 @@ public class Targeting : MonoBehaviour
     PathFinding pathFinding;
     Grid grid;
     DynamicObject targetingObject;
-    bool isTargeting = false;
+    public bool isTargeting = false;
     public bool IsTargeting 
     {
 
@@ -26,7 +26,6 @@ public class Targeting : MonoBehaviour
         }
         set
         {
-            if(gameManager == null) gameManager = gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
             gameManager.Targeting = value;
             isTargeting = value;
         }
@@ -40,7 +39,8 @@ public class Targeting : MonoBehaviour
         targetingObject = gameObject.GetComponent<DynamicObject>();
     }
 
-    public void Target()
+
+    public GridCell Target(int range)
     {
         if (IsTargeting == false) Debug.LogWarning("Not targeting?");
         
@@ -52,36 +52,14 @@ public class Targeting : MonoBehaviour
         path = pathFinding.FindPath(targetingObject.transform.position, pos, true);
         path = pathFinding.ReturnPathWithNoBlockin(path);
 
-        grid.DrawPath(path, path.Count);
+        grid.DrawPath(path, range, grid.pathTileRed, grid.pathTileBlue);
 
-        if (Input.GetMouseButtonDown(0) && path != null && path.Count > 0 && path[path.Count - 1].gridPos == UtilsHart.ToInt2(pos))
+        if (Input.GetMouseButtonDown(0) && path != null && path.Count > 0 && path[path.Count - 1].gridPos == UtilsHart.ToInt2(pos) && path.Count<= range)
         {
-            Debug.Log("Attacked!");
-
-
-            if (grid.GetCellByPos(pos).GetOccupiyingObject() != null && grid.GetCellByPos(pos).GetOccupiyingObject() != this.gameObject && grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>() != null)
-            {
-                Debug.Log("Hit!");
-                IDamagable idamagableObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<IDamagable>();
-                DynamicObject dynamicObject = grid.GetCellByPos(pos).GetOccupiyingObject().GetComponent<DynamicObject>();
-                idamagableObject.Damage(1);
-                if (dynamicObject != null) dynamicObject.Push(UtilsHart.GetDir(targetingObject.gridpos, dynamicObject.gridpos), 1);
-            }
-
-            if (grid.GetCellByPos(pos) is GridCellDestructable)
-            {
-                GridCellDestructable newCell = (GridCellDestructable)grid.GetCellByPos(pos);
-                newCell.Damage(1);
-            }
-
-
+            Debug.Log("Targeted");
+            return grid.GetCellByPos(pos);
         }
-
+        return null;
     }
-
-
-
-
-
 
 }

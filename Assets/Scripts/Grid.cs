@@ -14,6 +14,7 @@ public class Grid : MonoBehaviour
 
 
 
+    public enum CellDepth { cell, cellObject, both}
     //Normal Stuff
     public enum Direction { up, down, left, right };
     [SerializeField] public enum CellState 
@@ -38,40 +39,40 @@ public class Grid : MonoBehaviour
     public Tilemap wallTiles;
     public Tilemap pathTiles;
 
-    [SerializeField] private Sprite floorSprite;
+    [SerializeField] private Sprite floorSprite = null;
     [HideInInspector] public Tile floorTile;
 
-    [SerializeField] private Sprite floorPlankSprite;
+    [SerializeField] private Sprite floorPlankSprite = null;
     [HideInInspector] public Tile floorPlankTile;
 
-    [SerializeField] private Sprite darknessSprite;
+    [SerializeField] private Sprite darknessSprite = null;
     [HideInInspector] public Tile darknessTile;
 
-    [SerializeField] private Sprite wallSprite;
+    [SerializeField] private Sprite wallSprite = null;
     [HideInInspector] public Tile wallTile;
 
-    [SerializeField] private Sprite wallBlockedSprite; //Temporary sprite
+    [SerializeField] private Sprite wallBlockedSprite = null;
     [HideInInspector] public Tile wallBlockedTile;
 
-    [SerializeField] private Sprite entranceSprite;
+    [SerializeField] private Sprite entranceSprite = null;
     [HideInInspector] public Tile entranceTile;
 
-    [SerializeField] private Sprite debugSprite;
+    [SerializeField] private Sprite debugSprite = null;
     [HideInInspector] public Tile debugTile;
 
-    [SerializeField] private Sprite pathSprite;
+    [SerializeField] private Sprite pathSprite = null;
     [HideInInspector] public Tile pathTile;
 
-    [SerializeField] private Sprite pathSpriteRed;
+    [SerializeField] private Sprite pathSpriteRed = null;
     [HideInInspector] public Tile pathTileRed;
 
-    [SerializeField] private Sprite pathSpriteBlue;
+    [SerializeField] private Sprite pathSpriteBlue = null;
     [HideInInspector] public Tile pathTileBlue;
 
-    [SerializeField] private Sprite ruinSprite;
+    [SerializeField] private Sprite ruinSprite = null;
     [HideInInspector] public Tile ruinTile;
 
-    [SerializeField] private Sprite boundrySprite;
+    [SerializeField] private Sprite boundrySprite = null;
     [HideInInspector] public Tile boundryTile;
 
     [SerializeField]
