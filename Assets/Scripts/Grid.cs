@@ -276,6 +276,7 @@ public class Grid : MonoBehaviour
         }
     }
 
+
     public void DrawPath(List<GridCell> path, int distance, bool onlyDistance, Tile tile)
     {
         if (onlyDistance == false)

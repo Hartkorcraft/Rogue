@@ -1201,7 +1201,7 @@ MonoBehaviour:
   moveWithMouse: 1
   endTurnAfterMovePoint: 0
   speed: 40
-  targeting: 0
+  range: 5
 --- !u!58 &1372705521
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1672,7 +1672,7 @@ MonoBehaviour:
   currentSelection: {fileID: 0}
   pointer: {fileID: 28908875344831425, guid: 83bdb8b021930d945bded7b6907058f9, type: 3}
   canSelect: 1
-  deselectAfterFullMove: 1
+  deselectAfterFullMove: 0
 --- !u!4 &1983386186
 Transform:
   m_ObjectHideFlags: 0

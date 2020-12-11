@@ -14,7 +14,4 @@ public class TestObject : Npc
         return true;
     }
 
-
-
-
 }

@@ -81,7 +81,7 @@ public class PlayerController : DynamicObject
         }
         else if (selected)
         {
-           GridCell target = targeting.Target(range);
+           GridCell target = targeting.Target(range, false);
             if(target != null) { Attack(target); }
         }
 
@@ -105,6 +105,10 @@ public class PlayerController : DynamicObject
 
     public void Attack(GridCell target)
     {
+        if (target == null) return;
+
+        Debug.Log(target.gridPos);
+
         if (grid.GetCellByPos(target.gridPos).GetOccupiyingObject() != null && target.GetOccupiyingObject() != this.gameObject && target.GetOccupiyingObject().GetComponent<IDamagable>() != null)
         {
             Debug.Log("Hit!");
@@ -122,7 +126,9 @@ public class PlayerController : DynamicObject
     }
     public void Attack(GridCell target, Grid.CellDepth cellDepth)
     {
-        if(cellDepth == Grid.CellDepth.both)
+        if (target == null) return;
+     
+        if (cellDepth == Grid.CellDepth.both)
         {
             Attack(target);
             return;

@@ -15,8 +15,29 @@ public class Npc : DynamicObject, ITurn, IDamagable
     [SerializeField] protected Transform target;
     [SerializeField] protected bool canMove = true;
 
+    private int inventorySize = 5;
+    public int InventorySize 
+    {
+        get { return inventorySize;}
+        set
+        {
+            if (value > inventorySize)
+            {
+                inventorySize = value;
+                System.Array.Resize<Item>(ref inventory, inventorySize);
+            }
+            else Debug.LogWarning("smaller inventory size");
+        }
+            
+    }
+
+    [SerializeField] protected Item[] inventory;
+
+
     protected override void Awake()
     {
+        inventory = new Item[inventorySize];
+
         base.Awake();
         pathFinding = grid.GetComponent<PathFinding>();
 
@@ -61,42 +82,6 @@ public class Npc : DynamicObject, ITurn, IDamagable
 
         return true;
     }
-
-
-
-    /* 
-    public override void  Damage(float damage)
-    {
-        if (healthSystem.Destructable == false)
-        {
-            Debug.Log("Indestructable");
-            return;
-        }
-
-        HealthPoints =  HealthPoints - damage;
-        if (HealthPoints <= 0) Kill(); 
-    }    
-
-    public override void Kill()
-    {
-        if (healthSystem.Destructable == false)
-        {
-            Debug.Log("Indestructable");
-            return;
-        }
-
-        gameManager.DestroyDynamicObject(this.gameObject);
-        if(healthSystem.DeathParticle != null) { Instantiate(healthSystem.DeathParticle, transform.position, healthSystem.DeathParticle.transform.rotation); }
-        Debug.Log("Killed");
-    }
-    public override void ForceKill()
-    {
-        gameManager.DestroyDynamicObject(this.gameObject);
-        if (healthSystem.DeathParticle != null) { Instantiate(healthSystem.DeathParticle, transform.position, healthSystem.DeathParticle.transform.rotation); }
-        Debug.Log("Killed");
-    }
-    */
-
 
 
 }

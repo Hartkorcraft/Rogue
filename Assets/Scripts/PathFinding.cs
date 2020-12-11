@@ -159,7 +159,7 @@ public class PathFinding : MonoBehaviour
             for (int i = 0; i < path.Count; i++)
             {
                 newPath.Add(path[i]);
-                if (grid.CellStateBlocking(path[i]) == true && path[i].HasCellObject() == true)
+                if (grid.CellStateBlocking(path[i]) == true || path[i].HasCellObject() == true)
                 {
                     return newPath;
                 }

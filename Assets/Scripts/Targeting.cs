@@ -40,7 +40,7 @@ public class Targeting : MonoBehaviour
     }
 
 
-    public GridCell Target(int range)
+    public GridCell Target(int range, bool direct)
     {
         if (IsTargeting == false) Debug.LogWarning("Not targeting?");
         
@@ -54,11 +54,19 @@ public class Targeting : MonoBehaviour
 
         grid.DrawPath(path, range, grid.pathTileRed, grid.pathTileBlue);
 
-        if (Input.GetMouseButtonDown(0) && path != null && path.Count > 0 && path[path.Count - 1].gridPos == UtilsHart.ToInt2(pos) && path.Count<= range)
+        if (Input.GetMouseButtonDown(0) && path != null && path.Count > 0 && path.Count <= range)
         {
-            Debug.Log("Targeted");
-            return grid.GetCellByPos(pos);
+            if (path[path.Count - 1].gridPos == UtilsHart.ToInt2(pos))
+            {
+                Debug.Log("Targeted");
+                return grid.GetCellByPos(pos);
+            }
+            else if(direct == false)
+            {
+                return path[path.Count - 1];
+            }
         }
+        
         return null;
     }
 
