@@ -5,7 +5,7 @@ using UnityEngine;
 public class NpcMouseMovement : Npc
 {
     protected SelectionManager selectionManager;
-    private cakeslice.Outline outline;
+    protected cakeslice.Outline outline;
     public bool selected 
     {
         get 
@@ -14,7 +14,7 @@ public class NpcMouseMovement : Npc
             {
                 return true;
             }
-            else return false; ; 
+            else return false;
         } 
     }
 
@@ -56,7 +56,15 @@ public class NpcMouseMovement : Npc
         MouseMovement();
     }
 
-    private void MouseMovement()
+    private void DrawAvailableSpaces()
+    {
+        if (totalMovePoints < 0)
+            grid.DrawPath(pathFinding.GetAvailableSpaces(gridpos, 5, true), grid.pathTileFull, false);
+        else
+            grid.DrawPath(pathFinding.GetAvailableSpaces(gridpos, movePoints, true), grid.pathTileFull, false);
+    }
+
+    protected virtual void MouseMovement()
     {
 
         if (selected && selectionManager.IsHighlighting() == false)
@@ -69,7 +77,16 @@ public class NpcMouseMovement : Npc
             //if (movePoints > 0) 
             path = pathFinding.FindPath(transform.position, pos);
 
-            grid.DrawPath(path, movePoints, grid.pathTile, grid.pathTileBlue);
+            if (path != null)
+            {
+                grid.DrawPath(path, movePoints, grid.pathTile, grid.pathTileBlue, true);
+
+                //DrawAvailableSpaces();
+            }
+            else
+            {
+                grid.ClearPath();
+            }
 
             if (Input.GetMouseButtonDown(0) && movePoints > 0 && gameManager.MovingObjects == false && canMove)
             {

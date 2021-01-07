@@ -69,6 +69,33 @@ public class ItemManager
 
 }
 
+public class Inventory
+{
+    public Item[,] items;
+
+    public void ResizeInventory(Vector2Int size)
+    {
+
+    }
+
+    public void DropItem(Vector2Int itemPos)
+    {
+
+    }
+
+    public Item GetItem(Vector2Int itemPos)
+    {
+        Item item = null;
+
+        return item;
+    }
+
+    public void UseItem(Vector2Int itemPos)
+    {
+
+    }
+}
+
 public class Item_Soup : ItemUsable
 {
     public int itemID = 0;

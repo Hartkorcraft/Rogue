@@ -30,6 +30,7 @@ public class Testing : MonoBehaviour
         newCell.grid = grid;
         if(newCell != null) grid.SetTile(newCell);
 
+        grid.SetTile(new Vector2Int(5, 1), Grid.CellState.wall);
 
         dynamicObject.selectable = false;
         dynamicObject.HealthPoints = 5;

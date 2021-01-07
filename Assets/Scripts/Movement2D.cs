@@ -37,15 +37,17 @@ public class Movement2D : MonoBehaviour
     //MoveTo with Condition, movepoints and speed
     public bool MoveTo(List<GridCell> path, GameObject movingObject, int movePoints, float speed, Grid grid)
     {
+        List<GridCell> newPath = new List<GridCell>();
 
-        for (int i = 0; i < path.Count; i++)
+        if (movePoints > path.Count) movePoints = path.Count;
+        for (int i = 0; i < movePoints; i++)
         {
 
-            if (grid.CellStateBlocking(path[i]) == true && grid.IsCellOccupied(path[i]))
-                return false;
+            if (grid.CellStateBlocking(path[i]) == false && grid.IsCellOccupied(path[i]) == false)
+                newPath.Add(path[i]);
         }
 
-        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform,movePoints,speed, grid));
+        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(newPath, movingObject.transform,movePoints,speed, grid));
         gameManager.ResetOccupyingGameobjects();
 
         return false;
@@ -53,7 +55,16 @@ public class Movement2D : MonoBehaviour
 
     public bool MoveTo(List<GridCell> path, GameObject movingObject, float speed, Grid grid)
     {
-        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(path, movingObject.transform, speed, grid));
+        List<GridCell> newPath = new List<GridCell>();
+        for (int i = 0; i < path.Count; i++)
+        {
+            if(grid.CellStateBlocking(path[i]) == false)
+            {
+                newPath.Add(path[i]);
+            }
+        }
+
+        movingObject.GetComponent<MonoBehaviour>().StartCoroutine(Transition(newPath, movingObject.transform, speed, grid));
         gameManager.ResetOccupyingGameobjects();
 
         return false;
@@ -65,6 +76,12 @@ public class Movement2D : MonoBehaviour
     //Transition with movePoints
     public IEnumerator Transition(List<GridCell> path, Transform transform, int movePoints, float speed, Grid grid)
     {
+        if(path == null || path.Count == 0)
+        {
+            Debug.Log("no path");
+            yield return null;
+        }
+
         gameManager.MovingObjects = true;
         crTransitionRunning = true;
 

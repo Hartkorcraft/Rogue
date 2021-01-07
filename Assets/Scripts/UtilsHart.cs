@@ -47,7 +47,7 @@ public class UtilsHart
        if(Mathf.Abs(pos1.x-pos2.x) < Mathf.Abs(pos1.y - pos2.y))
         {
             if (pos1.y < pos2.y) return Grid.Direction.up;
-            else return Grid.Direction.up;
+            else return Grid.Direction.down;
         }
         else
         {

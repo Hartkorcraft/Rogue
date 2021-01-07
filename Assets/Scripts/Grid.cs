@@ -7,11 +7,14 @@ using UnityEngine.Tilemaps;
 public class Grid : MonoBehaviour
 {
 
-    //Debug Stuff
-    [SerializeField] private bool debugChangeTile = false;
-    [SerializeField] private CellState selectedChangeTile = CellState.wall;
 
+    [HideInInspector] public bool debugChangeTile = false;
+    [HideInInspector] public bool destructableDebugCell = false;
 
+    public GridCell debCell = null;
+    public GridCellDestructable debDestructableCell = null;
+
+    [HideInInspector] public bool initializeTileMaps = false;
 
 
     public enum CellDepth { cell, cellObject, both}
@@ -32,51 +35,49 @@ public class Grid : MonoBehaviour
         boundry
     };
 
-    public Tilemap tilemap;
 
-    public Tilemap floorTiles;
-    public Tilemap darknessTiles;
-    public Tilemap wallTiles;
-    public Tilemap pathTiles;
+    [HideInInspector] public Tilemap tilemap;
 
-    [SerializeField] private Sprite floorSprite = null;
-    [HideInInspector] public Tile floorTile;
+    [HideInInspector]
+    public Tilemap
+        floorTiles,
+        darknessTiles,
+        wallTiles,
+        pathTiles,
+        pathTilesDown;
 
-    [SerializeField] private Sprite floorPlankSprite = null;
-    [HideInInspector] public Tile floorPlankTile;
+    [HideInInspector] public Sprite 
+        floorSprite = null,
+        floorPlankSprite = null,
+        darknessSprite = null,
+        wallSprite = null,
+        wallBlockedSprite = null,
+        entranceSprite = null,
+        debugSprite = null,
+        pathSprite = null,
+        pathSpriteRed = null,
+        pathSpriteBlue = null,
+        pathSpriteFull = null,
+        ruinSprite = null,
+        boundrySprite = null;
 
-    [SerializeField] private Sprite darknessSprite = null;
-    [HideInInspector] public Tile darknessTile;
+    [HideInInspector] public Tile 
+        floorTile,
+        floorPlankTile,
+        darknessTile,
+        wallTile,
+        wallBlockedTile,
+        entranceTile,
+        debugTile,
+        pathTile,
+        pathTileRed,
+        pathTileBlue,
+        pathTileFull,
+        ruinTile,
+        boundryTile;
 
-    [SerializeField] private Sprite wallSprite = null;
-    [HideInInspector] public Tile wallTile;
 
-    [SerializeField] private Sprite wallBlockedSprite = null;
-    [HideInInspector] public Tile wallBlockedTile;
-
-    [SerializeField] private Sprite entranceSprite = null;
-    [HideInInspector] public Tile entranceTile;
-
-    [SerializeField] private Sprite debugSprite = null;
-    [HideInInspector] public Tile debugTile;
-
-    [SerializeField] private Sprite pathSprite = null;
-    [HideInInspector] public Tile pathTile;
-
-    [SerializeField] private Sprite pathSpriteRed = null;
-    [HideInInspector] public Tile pathTileRed;
-
-    [SerializeField] private Sprite pathSpriteBlue = null;
-    [HideInInspector] public Tile pathTileBlue;
-
-    [SerializeField] private Sprite ruinSprite = null;
-    [HideInInspector] public Tile ruinTile;
-
-    [SerializeField] private Sprite boundrySprite = null;
-    [HideInInspector] public Tile boundryTile;
-
-    [SerializeField]
-    private Vector2Int gridSize = new Vector2Int(20, 20);
+    public Vector2Int gridSize = new Vector2Int(20, 20);
 
     public GridCell[][] gridCells;
     public List<Sector> sectors = new List<Sector>();
@@ -115,6 +116,9 @@ public class Grid : MonoBehaviour
 
         pathTileBlue = ScriptableObject.CreateInstance<Tile>();
         pathTileBlue.sprite = pathSpriteBlue;
+
+        pathTileFull = ScriptableObject.CreateInstance<Tile>();
+        pathTileFull.sprite = pathSpriteFull;
 
         debugTile = ScriptableObject.CreateInstance<Tile>();
         debugTile.sprite = debugSprite;
@@ -207,13 +211,29 @@ public class Grid : MonoBehaviour
     {
         if (debugChangeTile == true)
         {
+            
             if (Input.GetMouseButtonDown(0))
             {
-                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2Int pos = UtilsHart.ToInt2(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+               
                 if (GridCellsRangeCheck(pos) == true)
-                    SetTile(GetCellPos(pos), selectedChangeTile);
+                {
+                    if (destructableDebugCell)
+                    {
+                        GridCellDestructable newCell = new GridCellDestructable(pos, debDestructableCell.cellstate, this, debDestructableCell.TotalHealthPoints, debDestructableCell.HealthPoints, debDestructableCell.stateAfterDestruction);
 
+                        SetTile(newCell);
+                    }
+                    else
+                    {
+                        GridCell newCell = new GridCell(pos, debCell.cellstate, this);
+
+
+                        SetTile(newCell);
+                    }
+                }
             }
+            
         }
     }
     public bool TurnMapEdition()
@@ -224,74 +244,127 @@ public class Grid : MonoBehaviour
     public void ClearPath()
     {
         pathTiles.ClearAllTiles();
+        pathTilesDown.ClearAllTiles();
     }
 
-    public void DrawPath(List<GridCell> path, int distance)
+    public void ClearPath(bool up)
     {
-        pathTiles.ClearAllTiles();
+        if(up)pathTiles.ClearAllTiles();
+        else pathTilesDown.ClearAllTiles();
+    }
+
+    public void DrawPath(List<GridCell> path, int distance, bool up)
+    {
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
         if (path != null)
         {
             for (int i = 0; i < path.Count; i++)
             {
                 if (distance > 0)
-                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
-                else pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTileRed);
+                    tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
+                else tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTileRed);
                 distance--;
             }
         }
     }
 
-    public void DrawPath(List<GridCell> path, int distance, Tile tile1, Tile tile2)
+    public void DrawPath(List<GridCell> path, bool up)
     {
-        pathTiles.ClearAllTiles();
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                    tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
+            }
+        }
+    }
+
+
+    public void DrawPath(List<GridCell> path, Tile tile, bool up)
+    {
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
+        if (path != null)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                if(path[i] != null)
+                tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile);
+            }
+        }
+    }
+
+    public void DrawPath(List<GridCell> path, int distance, Tile tile1, Tile tile2, bool up)
+    {
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
         if (path != null)
         {
             for (int i = 0; i < path.Count; i++)
             {
                 if (distance > 0)
-                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile1);
-                else pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile2);
+                    tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile1);
+                else tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile2);
                 distance--;
             }
         }
     }
 
-    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance)
+    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance, bool up)
     {
+
         if(onlyDistance == false)
         {
-            DrawPath(path, distance);
+            DrawPath(path, distance,up);
             return;
         }
 
-        pathTiles.ClearAllTiles();
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
+
         if (path != null)
         {
             for (int i = 0; i < path.Count; i++)
             {
                 if (distance > 0)
-                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
+                    tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), pathTile);
                 distance--;
             }
         }
     }
 
 
-    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance, Tile tile)
+    public void DrawPath(List<GridCell> path, int distance, bool onlyDistance, Tile tile, bool up)
     {
         if (onlyDistance == false)
         {
-            DrawPath(path, distance);
+            DrawPath(path, distance, up );
             return;
         }
 
-        pathTiles.ClearAllTiles();
+        Tilemap tiles;
+        if (up) tiles = pathTiles; else tiles = pathTilesDown;
+
+        ClearPath(up);
         if (path != null)
         {
             for (int i = 0; i < path.Count; i++)
             {
                 if (distance > 0)
-                    pathTiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile);
+                    tiles.SetTile(new Vector3Int(path[i].gridPos.x, path[i].gridPos.y, 0), tile);
                 distance--;
             }
         }
@@ -386,20 +459,20 @@ public class Grid : MonoBehaviour
     
     public bool GridCellsRangeCheck(Vector2Int index)
     {
-        if ((index.x >= 0 && index.x <= gridSize.x) && (index.y >= 0 && index.y <= gridSize.y))
+        if ((index.x >= 0 && index.x < gridSize.x) && (index.y >= 0 && index.y < gridSize.y))
             return true;
         else return false;
     }
     public bool GridCellsRangeCheck(Vector2 pos)
     {
-        if ((pos.x >= 0 && pos.x <= gridSize.x) && (pos.y >= 0 && pos.y <= gridSize.y))
+        if ((pos.x >= 0 && pos.x < gridSize.x) && (pos.y >= 0 && pos.y < gridSize.y))
             return true;
         else return false;
     }
 
     public bool GridCellsRangeCheck(Vector3 pos)
     {
-        if ((pos.x >= 0 && pos.x <= gridSize.x) && (pos.y >= 0 && pos.y <= gridSize.y))
+        if ((pos.x >= 0 && pos.x < gridSize.x) && (pos.y >= 0 && pos.y < gridSize.y))
             return true;
         else return false;
     }
@@ -423,6 +496,15 @@ public class Grid : MonoBehaviour
             return gridCells[Mathf.FloorToInt(pos.x)][Mathf.FloorToInt(pos.y)];
         else return null;
     }
+        public List<GridCell> GetCellsByPos(List<Vector2Int> pos)
+    {
+        List<GridCell> cells = new List<GridCell>();
+        for (int i = 0; i < pos.Count; i++)
+        {
+            cells.Add(GetCellByPos(pos[i]));
+        }
+        return cells;
+    }
 
     public List<GridCell> GetNeigbours(GridCell cell)
     {
@@ -444,6 +526,25 @@ public class Grid : MonoBehaviour
             }
         }
         return neigbours;
+    }
+
+    public List<GridCell> ReturnCellsWithBlocking(List<GridCell> cells)
+    {
+        List<GridCell> newCells = new List<GridCell>();
+
+        if (newCells != null)
+            for (int i = 0; i < cells.Count; i++)
+            {
+                if (CellStateBlocking(cells[i]) == true || cells[i].HasCellObject() == true)
+                {
+
+                }
+                else newCells.Add(cells[i]);
+
+
+            }
+
+        return newCells;
     }
 
     public Sector GetBiggestSector()
@@ -552,6 +653,8 @@ public class GridCell
     public Grid.CellState cellstate;
     public GameObject occupyingObject;
 
+    public List<Item> items = new List<Item>();
+    
     //PathFindingStuff:
     [HideInInspector] public GridCell parent;
     [HideInInspector] public int gCost;
@@ -605,7 +708,7 @@ public class GridCell
 [System.Serializable]
 public class GridCellDestructable : GridCell, IDamagable
 {
-    public GridCellDestructable(Vector2Int gridPos, Grid.CellState cellState, Grid grid, int totalHealthPoints, int healthPoints, Grid.CellState stateAfterDestruction) : base(gridPos, cellState, grid)
+    public GridCellDestructable(Vector2Int gridPos, Grid.CellState cellState, Grid grid, float totalHealthPoints, float healthPoints, Grid.CellState stateAfterDestruction) : base(gridPos, cellState, grid)
     {
         healthSystem = new HealthSystem(totalHealthPoints, healthPoints);
         this.stateAfterDestruction = stateAfterDestruction;
@@ -615,7 +718,7 @@ public class GridCellDestructable : GridCell, IDamagable
     public float TotalHealthPoints { get => healthSystem.TotalHealthPoints; set => healthSystem.TotalHealthPoints = value; }
     public float HealthPoints { get => healthSystem.HealthPoints; set => healthSystem.HealthPoints = value; }
     
-    [SerializeField] private Grid.CellState stateAfterDestruction;
+    public Grid.CellState stateAfterDestruction;
 
     public void Damage(float damage)
     {

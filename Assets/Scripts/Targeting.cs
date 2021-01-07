@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Targeting : MonoBehaviour
+[System.Serializable]
+public class Targeting
 {
     GameManager gameManager;
     PathFinding pathFinding;
     Grid grid;
     DynamicObject targetingObject;
-    public bool isTargeting = false;
+    [SerializeField] public int targetingRange = 2;
+    private bool isTargeting = false;
     public bool IsTargeting 
     {
 
@@ -36,8 +38,7 @@ public class Targeting : MonoBehaviour
         grid = GameObject.FindGameObjectWithTag("Grid").GetComponent<Grid>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         pathFinding = grid.GetComponent<PathFinding>();
-        targetingObject = gameObject.GetComponent<DynamicObject>();
-    }
+   }
 
 
     public GridCell Target(int range, bool direct)
@@ -52,7 +53,7 @@ public class Targeting : MonoBehaviour
         path = pathFinding.FindPath(targetingObject.transform.position, pos, true);
         path = pathFinding.ReturnPathWithNoBlockin(path);
 
-        grid.DrawPath(path, range, grid.pathTileRed, grid.pathTileBlue);
+        grid.DrawPath(path, range, grid.pathTileRed, grid.pathTileBlue,true);
 
         if (Input.GetMouseButtonDown(0) && path != null && path.Count > 0 && path.Count <= range)
         {
@@ -69,5 +70,16 @@ public class Targeting : MonoBehaviour
         
         return null;
     }
+
+    public Targeting(int targetingRange, DynamicObject targetingObject, GameManager gameManager, Grid grid, PathFinding pathFinding)
+    {
+        this.grid = grid;
+        this.pathFinding = pathFinding;
+        this.gameManager = gameManager;
+        this.targetingRange = targetingRange;
+        this.targetingObject = targetingObject;
+    }
+
+
 
 }

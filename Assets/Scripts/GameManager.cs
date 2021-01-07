@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         ResetOccupyingGameobjects();
         //grid.RemoveOccupiedObject(playerObject);
 
+
         turnNum++;
         for (int i = 0; i < turnObjects.Count; i++)
         {
@@ -83,9 +84,15 @@ public class GameManager : MonoBehaviour
 
     public void AddITurn(ITurn interfaceComponent,GameObject gameObject)
     {
+        if(interfaceComponent == null) { Debug.LogWarning("no iturn"); return; }
         turnObjects.Add(interfaceComponent);
-        dynamicObjects.Add(gameObject);
+        //dynamicObjects.Add(gameObject);
     }
+    public void RemoveITurn(ITurn interfaceComponent)
+    {
+        turnObjects.Remove(interfaceComponent);
+    }
+
 
     public void AddDynamicObject(GameObject gameObject)
     {
@@ -142,6 +149,10 @@ public class GameManager : MonoBehaviour
         if (dynamicObjects.Contains(dynamicObject))
         {
             dynamicObjects.Remove(dynamicObject);
+
+            ITurn iturn = dynamicObject.GetComponent<ITurn>();
+            if(iturn != null) turnObjects.Remove(iturn);
+
             Destroy(dynamicObject);
             Debug.Log("Destroyed Object ");
         }

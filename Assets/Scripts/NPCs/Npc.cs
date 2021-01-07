@@ -40,13 +40,13 @@ public class Npc : DynamicObject, ITurn, IDamagable
 
         base.Awake();
         pathFinding = grid.GetComponent<PathFinding>();
+        gameManager.AddITurn(this, this.gameObject);
 
     }
 
     protected override void Start()
     {
         base.Start();
-        gameManager.AddITurn(this,this.gameObject);
         //transform.position = new Vector3(grid.GetPosTransform(transform).x + 0.5f, grid.GetPosTransform(transform).y + 0.5f, transform.position.z);
 
     }
@@ -56,24 +56,61 @@ public class Npc : DynamicObject, ITurn, IDamagable
         gameManager.ResetOccupyingGameobjects();
         movePoints = totalMovePoints;
 
+        Vector2Int pos = new Vector2Int(4, 3);
+        pos = UtilsHart.ToInt2(target.position);
+
         if (target != null)
         {
             List<GridCell> path = new List<GridCell>();
-            if (movePoints > 0) path = pathFinding.FindPath(transform.position, target.position);
+            if (movePoints > 0) path = pathFinding.FindPath(transform.position, pos);
             int pathCellNum = 0;
-            while (movePoints > 0)
+
+            grid.DrawPath(path, movePoints, grid.pathTile, grid.pathTileBlue, true);
+
+            while (movePoints > 0 || totalMovePoints <= 0)
             {
+
                 if (path != null && path.Count > 0 && pathCellNum < path.Count && canMove)
                 {
-                    movePoints--;
-                    movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
-                    //movement2D.MoveTo(path, this, movePoints, speed, grid);
 
-                    if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(target.position.x, target.position.y))) break;
+                    if (path.Count < 1)
+                    {
+                        if (grid.CellStateBlocking(grid.GetCellByPos(pos)) == true || grid.GetCellByPos(pos).HasCellObject() == true)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (movement2D.CrTransitionRunning == false)
+                    {
+                        if (totalMovePoints > 0)
+                            movement2D.MoveTo(path, this.gameObject, movePoints, speed, grid);
+                        else
+                            movement2D.MoveTo(path, this.gameObject, 50, speed, grid);
+                    }
+
                     pathCellNum++;
+                    if (UtilsHart.ToInt2(new Vector2(transform.position.x, transform.position.y)) == UtilsHart.ToInt2(new Vector2(pos.x, pos.y))) break;
+
+                    int moves;
+
+                    if (path.Count > movePoints)
+                    {
+                        moves = movePoints;
+                    }
+                    else
+                    {
+                        moves = path.Count;
+                    }
+                    movePoints = movePoints - moves;
+
+                    //Debug.Log("Remaining move points " + movePoints);
+
+                    break;
                 }
                 else
                 {
+                    Debug.Log("no path krulik");
                     movePoints = 0;
                     break;
                 }

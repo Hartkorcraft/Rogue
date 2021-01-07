@@ -2,30 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : DynamicObject
+public class PlayerController : NpcMouseMovement
 {
     private PathFinding pathfinding;
-    private Targeting targeting;
-    SelectionManager selectionManager;
+    [SerializeField] protected Targeting targeting;
 
-    cakeslice.Outline outline;
+
     private bool moved = false;
-    [SerializeField] private bool canMove = true;
-    [SerializeField] private int totalMovePoints = 5;
-    [SerializeField] private int movePoints = 5;
     [SerializeField] private bool moveWithMouse = false;
     [SerializeField] private bool endTurnAfterMovePoint = false;
-    [SerializeField] protected float speed = 40f;
-    [SerializeField] private int range = 5;
 
     protected override void Awake()
     {
 
         base.Awake();
 
-        pathfinding = grid.GetComponent<PathFinding>();
-        targeting = gameObject.AddComponent<Targeting>();
+        targeting = new Targeting(targeting.targetingRange, this, gameManager, grid, pathFinding);
 
+        pathfinding = grid.GetComponent<PathFinding>();
+       
         selectionManager = GameObject.FindGameObjectWithTag("SelectionManager").GetComponent<SelectionManager>();
         if (GetComponent<cakeslice.Outline>() == null)
         {
@@ -37,6 +32,7 @@ public class PlayerController : DynamicObject
     protected override void Start()
     {
         base.Start();
+        gameManager.RemoveITurn(this.GetComponent<ITurn>());
         transform.position = new Vector3(grid.GetPosTransform(transform).x + 0.5f , grid.GetPosTransform(transform).y + 0.5f , transform.position.z) ;
         movePoints = totalMovePoints;
     }
@@ -55,21 +51,9 @@ public class PlayerController : DynamicObject
 
     }
 
-
-    public bool selected
+    public override bool Turn()
     {
-        get
-        {
-            if (selectionManager.GetCurSelection() != null && selectionManager.GetCurSelection().Equals(this.transform))
-            {
-                return true;
-            }
-            else return false; ;
-        }
-    }
 
-    public bool Turn()
-    {
         if (Input.GetKeyDown(KeyCode.K))
         {
             targeting.IsTargeting = !targeting.IsTargeting;
@@ -77,11 +61,13 @@ public class PlayerController : DynamicObject
 
         if (targeting.IsTargeting == false)
         {
-            Movement();
+            canMove = true;
+            MouseMovement();
         }
         else if (selected)
         {
-           GridCell target = targeting.Target(range, false);
+            canMove = false;
+           GridCell target = targeting.Target(targeting.targetingRange, false);
             if(target != null) { Attack(target); }
         }
 
@@ -97,7 +83,7 @@ public class PlayerController : DynamicObject
             movePoints--;
         }
 
-        if (movePoints <= 0 && (moveWithMouse && endTurnAfterMovePoint)) EndTurn();
+        if ((movePoints <= 0 && totalMovePoints >= 0) && (moveWithMouse && endTurnAfterMovePoint)) EndTurn();
 
 
         return true;
@@ -150,7 +136,7 @@ public class PlayerController : DynamicObject
         }
     }
 
-    public void Movement()
+    protected override void MouseMovement()
     {
         if (moveWithMouse)
         {
@@ -166,8 +152,17 @@ public class PlayerController : DynamicObject
                 //if (movePoints > 0) 
                 path = pathfinding.FindPath(transform.position, pos);
 
-                if (totalMovePoints > 0) grid.DrawPath(path, movePoints, grid.pathTile,grid.pathTileBlue);
-                else grid.DrawPath(path, 50,grid.pathTile);
+                if (path != null)
+                {
+                    if (totalMovePoints > 0) grid.DrawPath(path, movePoints, grid.pathTile, grid.pathTileBlue, true);
+                    else grid.DrawPath(path, 50, grid.pathTile, true);
+
+                    //DrawAvailableSpaces();
+                }
+                else
+                {
+                    grid.ClearPath();
+                }
 
                 if (Input.GetMouseButtonDown(0) && (movePoints > 0 || totalMovePoints <= 0) && gameManager.MovingObjects == false && canMove)
                 {
@@ -176,8 +171,14 @@ public class PlayerController : DynamicObject
                     {
                         if (path != null && path.Count > 0 && pathCellNum < path.Count)
                         {
-                            //movePoints--;
-                            //movement2D.MoveTo(path[pathCellNum].gridPos, transform, grid);
+
+                            if (path.Count <= 1)
+                            {
+                                if (grid.CellStateBlocking(grid.GetCellByPos(pos)) == true || grid.GetCellByPos(pos).HasCellObject() == true)
+                                {
+                                    break;
+                                }
+                            }
 
                             if (movement2D.CrTransitionRunning == false)
                             {
@@ -209,7 +210,7 @@ public class PlayerController : DynamicObject
                         else
                         {
                             Debug.Log("No path");
-                            movePoints = 0;
+                            //movePoints = 0;
                             break;
                         }
                     }

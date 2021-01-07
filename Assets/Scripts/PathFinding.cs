@@ -21,12 +21,11 @@ public class PathFinding : MonoBehaviour
 
     public List<GridCell> FindPath(Vector2 startPos, Vector2 endPos)
     {
-        // gameManager.ResetPositions();
-        //HashSet<Vector2Int> positions = gameManager.GetPositions();
-        //positions.Remove(grid.GetCellPos(endPos));
+
 
 
         //Check if Cells are on grid
+
         if (grid.GridCellsRangeCheck(startPos) == false || grid.GridCellsRangeCheck(endPos) == false || startPos.Equals(endPos) == true) return null;
 
 
@@ -55,6 +54,10 @@ public class PathFinding : MonoBehaviour
             if (currentCell == endCell)
             {
                 List<GridCell> path = RetracePath(startCell, endCell);
+                if (endCell.HasCellObject() == true || grid.CellStateBlocking(endCell) == true)
+                {
+                    path.Remove(endCell);
+                }
                 return path;
             }
 
@@ -67,7 +70,7 @@ public class PathFinding : MonoBehaviour
                 }
                 else
                 {
-                    if (grid.CellStateBlocking(neigbour)) continue;
+                    if (grid.CellStateBlocking(neigbour) && neigbour != endCell) continue;
                 }
 
                 int newCostToNeighbour = currentCell.gCost + GetDistance(currentCell, neigbour);
@@ -167,6 +170,78 @@ public class PathFinding : MonoBehaviour
             }
 
         return newPath;
+    }
+
+
+    public List<GridCell> GetAvailableSpaces(Vector2Int pos, int movementPoints)
+    {
+        List<GridCell> availableSpaces = new List<GridCell>();
+
+        for (int y = -movementPoints; y <= movementPoints; y++)
+        {
+
+            for (int x = -movementPoints; x <= movementPoints; x++)
+            {
+                if (y == 0 && x == 0) continue;
+
+                GridCell cell = grid.GetCellByPos(new Vector2Int(pos.x + x, pos.y + y));
+                if (cell != null)
+                    availableSpaces.Add(cell);
+
+            }
+        }
+        return availableSpaces;
+    }
+
+    public List<GridCell> GetAvailableSpaces(Vector2Int pos, int movementPoints, bool blocking)
+    {
+        List<GridCell> availableSpaces = new List<GridCell>();
+
+        for (int y = -movementPoints; y <= movementPoints; y++)
+        {
+
+            for (int x = -movementPoints; x <= movementPoints; x++)
+            {
+                if (y == 0 && x == 0) continue;
+
+                GridCell cell = grid.GetCellByPos(new Vector2Int(pos.x + x, pos.y + y));
+                if (cell != null)
+                    availableSpaces.Add(cell);
+
+            }
+        }
+
+        if (blocking) return grid.ReturnCellsWithBlocking(availableSpaces);
+        else return availableSpaces;
+    }
+
+
+    public List<GridCell> GetAvailableSpaces(Vector2Int pos, int movementPoints, bool blocking, bool diagonally)
+    {
+        if(diagonally == false)
+        {
+            return GetAvailableSpaces(pos, movementPoints);
+        }
+
+        List<GridCell> availableSpaces = new List<GridCell>();
+
+        for (int y = -movementPoints; y <= movementPoints; y++)
+        {
+            int difference = movementPoints - Mathf.Abs(y);
+
+            for (int x = -difference; x <= difference; x++)
+            {
+                if (y == 0 && x == 0) continue;
+
+                GridCell cell = grid.GetCellByPos(new Vector2Int(pos.x + x, pos.y + y));
+                if (cell != null)
+                    availableSpaces.Add(cell);
+
+            }
+        }
+
+        if (blocking) return grid.ReturnCellsWithBlocking(availableSpaces);
+        else return availableSpaces;
     }
 
     private List<GridCell> RetracePath(GridCell startNode, GridCell endNode)

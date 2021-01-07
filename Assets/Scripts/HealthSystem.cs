@@ -16,7 +16,7 @@ public class HealthSystem
 
 
 
-    public HealthSystem(int totalHealthPoints, int healthPoints)
+    public HealthSystem(float totalHealthPoints, float healthPoints)
     {
         this.healthPoints = healthPoints;
         this.totalHealthPoints = totalHealthPoints;
